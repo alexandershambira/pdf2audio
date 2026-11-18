@@ -39,284 +39,79 @@
     padding-bottom:env(safe-area-inset-bottom,0px);
     overflow:hidden;
   }
-  #app{
-    height:100%;
-    width:100%;
-    display:flex;
-    flex-direction:column;
-  }
+  #app{ height:100%; width:100%; display:flex; flex-direction:column; }
 
-  /* ---------- Top bar ---------- */
   header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:14px 18px;
-    border-bottom:1px solid var(--line);
-    flex-shrink:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid var(--line); flex-shrink:0;
   }
-  .brand{
-    font-family:'Source Serif 4',serif;
-    font-size:17px;
-    letter-spacing:0.01em;
-  }
-  .brand em{font-style:italic;color:var(--amber);}
-  #fileLabel{
-    font-size:13px;
-    color:var(--ink-dim);
-    max-width:46vw;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-  #newFileBtn{
-    background:none;
-    border:1px solid var(--line);
-    color:var(--ink-dim);
-    font-size:13px;
-    padding:6px 12px;
-    border-radius:999px;
-    font-family:inherit;
-  }
-  #newFileBtn:active{background:var(--surface-2);}
+  .brand{ font-family:'Source Serif 4',serif; font-size:17px; letter-spacing:0.01em; }
+  .brand em{ font-style:italic; color:var(--amber); }
+  #fileLabel{ font-size:13px; color:var(--ink-dim); max-width:46vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #newFileBtn{ background:none; border:1px solid var(--line); color:var(--ink-dim); font-size:13px; padding:6px 12px; border-radius:999px; font-family:inherit; }
+  #newFileBtn:active{ background:var(--surface-2); }
 
-  /* ---------- Drop screen ---------- */
-  #dropScreen{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:28px;
-    text-align:center;
-    gap:18px;
-    overflow-y:auto;
-  }
-  #dropScreen h1{
-    font-family:'Source Serif 4',serif;
-    font-weight:600;
-    font-size:clamp(26px,5.6vw,40px);
-    line-height:1.15;
-    margin:0;
-    max-width:13ch;
-  }
-  #dropScreen h1 span{color:var(--amber);}
-  #dropScreen p.lede{
-    color:var(--ink-dim);
-    font-size:15px;
-    max-width:38ch;
-    margin:0;
-    line-height:1.5;
-  }
-  .dropzone{
-    border:1.5px dashed var(--line);
-    border-radius:18px;
-    padding:26px 30px;
-    width:min(100%,380px);
-    transition:border-color .15s ease, background .15s ease;
-  }
-  .dropzone.drag{border-color:var(--amber); background:rgba(232,178,77,0.06);}
-  #chooseBtn{
-    background:var(--amber);
-    color:#1B1D22;
-    border:none;
-    font-family:'Inter',sans-serif;
-    font-weight:600;
-    font-size:15px;
-    padding:12px 26px;
-    border-radius:999px;
-    margin-top:4px;
-  }
-  #chooseBtn:active{opacity:0.85;}
-  #dropHint{font-size:13px; color:var(--ink-dim); margin-top:10px;}
-  #loadStatus{font-size:13px; color:var(--teal); min-height:18px;}
-  #resumeBanner{
-    display:none;
-    font-size:13px;
-    color:var(--ink-dim);
-    background:var(--surface);
-    border:1px solid var(--line);
-    padding:10px 16px;
-    border-radius:12px;
-  }
-  #resumeBanner button{
-    background:none;border:none;color:var(--amber);font-family:inherit;font-size:13px;font-weight:600;padding:0 0 0 6px;
-  }
+  #dropScreen{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px; text-align:center; gap:18px; overflow-y:auto; }
+  #dropScreen h1{ font-family:'Source Serif 4',serif; font-weight:600; font-size:clamp(26px,5.6vw,40px); line-height:1.15; margin:0; max-width:13ch; }
+  #dropScreen h1 span{ color:var(--amber); }
+  #dropScreen p.lede{ color:var(--ink-dim); font-size:15px; max-width:38ch; margin:0; line-height:1.5; }
+  .dropzone{ border:1.5px dashed var(--line); border-radius:18px; padding:26px 30px; width:min(100%,380px); transition:border-color .15s ease, background .15s ease; }
+  .dropzone.drag{ border-color:var(--amber); background:rgba(232,178,77,0.06); }
+  #chooseBtn{ background:var(--amber); color:#1B1D22; border:none; font-family:'Inter',sans-serif; font-weight:600; font-size:15px; padding:12px 26px; border-radius:999px; margin-top:4px; }
+  #chooseBtn:active{ opacity:0.85; }
+  #dropHint{ font-size:13px; color:var(--ink-dim); margin-top:10px; }
+  #loadStatus{ font-size:13px; color:var(--teal); min-height:18px; }
+  #resumeBanner{ display:none; font-size:13px; color:var(--ink-dim); background:var(--surface); border:1px solid var(--line); padding:10px 16px; border-radius:12px; }
 
-  .divider{
-    display:flex; align-items:center; gap:10px;
-    width:min(100%,380px); color:var(--ink-dim); font-size:12px;
-  }
-  .divider::before, .divider::after{content:''; flex:1; height:1px; background:var(--line);}
+  .divider{ display:flex; align-items:center; gap:10px; width:min(100%,380px); color:var(--ink-dim); font-size:12px; }
+  .divider::before, .divider::after{ content:''; flex:1; height:1px; background:var(--line); }
 
-  #pasteBox{
-    width:min(100%,380px);
-    display:flex; flex-direction:column; gap:10px;
-  }
-  #pasteArea{
-    width:100%;
-    background:var(--surface);
-    border:1px solid var(--line);
-    color:var(--ink);
-    border-radius:12px;
-    padding:12px;
-    font-family:'Inter',sans-serif;
-    font-size:14px;
-    line-height:1.5;
-    resize:vertical;
-  }
-  #pasteArea:focus{outline:none; border-color:var(--amber);}
-  #pasteGo{
-    background:none;
-    border:1px solid var(--line);
-    color:var(--ink);
-    font-family:inherit;
-    font-size:14px;
-    font-weight:600;
-    padding:10px 18px;
-    border-radius:999px;
-  }
-  #pasteGo:active{background:var(--surface-2);}
+  #pasteBox{ width:min(100%,380px); display:flex; flex-direction:column; gap:10px; }
+  #pasteArea{ width:100%; background:var(--surface); border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:12px; font-family:'Inter',sans-serif; font-size:14px; line-height:1.5; resize:vertical; }
+  #pasteArea:focus{ outline:none; border-color:var(--amber); }
+  #pasteGo{ background:none; border:1px solid var(--line); color:var(--ink); font-family:inherit; font-size:14px; font-weight:600; padding:10px 18px; border-radius:999px; }
+  #pasteGo:active{ background:var(--surface-2); }
 
-  /* ---------- Reader screen ---------- */
-  #reader{
-    flex:1;
-    display:none;
-    flex-direction:column;
-    min-height:0;
-  }
-  #textStage{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:6vh 8vw;
-    overflow-y:auto;
-    min-height:0;
-  }
-  #currentText{
-    font-family:'Source Serif 4',serif;
-    font-size:clamp(20px,3.6vw,30px);
-    line-height:1.5;
-    max-width:62ch;
-    text-align:left;
-  }
-  #currentText .prev, #currentText .next{color:var(--ink-dim); opacity:.55;}
-  #currentText .now{color:var(--ink);}
-  #pageTag{
-    text-align:center;
-    font-size:12px;
-    color:var(--ink-dim);
-    letter-spacing:.04em;
-    padding-bottom:4px;
-    flex-shrink:0;
-  }
+  #reader{ flex:1; display:none; flex-direction:column; min-height:0; }
+  #textStage{ flex:1; display:flex; align-items:center; justify-content:center; padding:6vh 8vw; overflow-y:auto; min-height:0; }
+  #currentText{ font-family:'Source Serif 4',serif; font-size:clamp(20px,3.6vw,30px); line-height:1.5; max-width:62ch; text-align:left; }
+  #currentText .prev, #currentText .next{ color:var(--ink-dim); opacity:.55; }
+  #currentText .now{ color:var(--ink); }
+  #pageTag{ text-align:center; font-size:12px; color:var(--ink-dim); letter-spacing:.04em; padding-bottom:4px; flex-shrink:0; }
 
-  .controls{
-    flex-shrink:0;
-    padding:10px 20px calc(16px + env(safe-area-inset-bottom,0px));
-    border-top:1px solid var(--line);
-    background:var(--surface);
-  }
-  #scrubber{
-    height:4px;
-    border-radius:4px;
-    background:var(--line);
-    position:relative;
-    margin:4px 0 16px;
-  }
-  #scrubFill{
-    position:absolute; left:0; top:0; bottom:0;
-    background:var(--amber);
-    border-radius:4px;
-    width:0%;
-  }
-  .transport{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:28px;
-    margin-bottom:14px;
-  }
-  .transport button{
-    background:none;
-    border:none;
-    color:var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-  .transport svg{width:26px;height:26px;}
-  #playBtn{
-    background:var(--amber);
-    width:58px;height:58px;
-    border-radius:50%;
-  }
-  #playBtn svg{width:24px;height:24px;color:#1B1D22;}
-  .transport button:active{opacity:0.7;}
+  .controls{ flex-shrink:0; padding:10px 20px calc(16px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line); background:var(--surface); }
+  #scrubber{ height:4px; border-radius:4px; background:var(--line); position:relative; margin:4px 0 16px; }
+  #scrubFill{ position:absolute; left:0; top:0; bottom:0; background:var(--amber); border-radius:4px; width:0%; }
+  .transport{ display:flex; align-items:center; justify-content:center; gap:28px; margin-bottom:14px; }
+  .transport button{ background:none; border:none; color:var(--ink); display:flex; align-items:center; justify-content:center; }
+  .transport svg{ width:26px; height:26px; }
+  #playBtn{ background:var(--amber); width:58px; height:58px; border-radius:50%; position:relative; }
+  #playBtn svg{ width:24px; height:24px; color:#1B1D22; }
+  #playBtn.loading svg{ opacity:0.35; }
+  .transport button:active{ opacity:0.7; }
 
-  #voiceSection{margin-bottom:12px;}
-  #voiceLabel{font-size:11px; color:var(--ink-dim); letter-spacing:.03em; margin-bottom:6px;}
-  #voiceGrid{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding-bottom:4px;
-    -webkit-overflow-scrolling:touch;
-  }
-  .voicePill{
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    background:var(--surface-2);
-    border:1.5px solid var(--line);
-    color:var(--ink);
-    font-family:inherit;
-    font-size:13px;
-    padding:8px 14px;
-    border-radius:999px;
-    white-space:nowrap;
-  }
-  .voicePill.active{border-color:var(--amber); color:var(--amber);}
-  .voicePill .g{color:var(--ink-dim); font-size:12px;}
-  .voicePill.active .g{color:var(--amber);}
-  #voiceNote{font-size:11.5px; color:var(--ink-dim); margin-top:6px; line-height:1.4;}
+  .voiceRow{ margin-bottom:10px; }
+  .voiceRowLabel{ font-size:10.5px; color:var(--ink-dim); letter-spacing:.04em; margin-bottom:6px; }
+  .voiceScroller{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
+  .voicePill{ flex-shrink:0; display:flex; align-items:center; gap:6px; background:var(--surface-2); border:1.5px solid var(--line); color:var(--ink); font-family:inherit; font-size:13px; padding:8px 14px; border-radius:999px; white-space:nowrap; }
+  .voicePill.active{ border-color:var(--amber); color:var(--amber); }
+  .voicePill .g{ color:var(--ink-dim); font-size:12px; }
+  .voicePill.active .g{ color:var(--amber); }
+  .voicePill.cloudPill.active{ border-color:var(--teal); color:var(--teal); }
+  .voicePill.cloudPill.active .g{ color:var(--teal); }
+  .voicePill.addPill{ border-style:dashed; color:var(--ink-dim); }
+  #voiceNote, #cloudNote{ font-size:11.5px; color:var(--ink-dim); margin-top:6px; line-height:1.4; }
 
-  .settingsRow{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:center;
-  }
-  .speedWrap{display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:4px 10px;}
-  .speedWrap button{color:var(--ink-dim); font-size:16px; padding:4px 6px;}
-  #speedVal{font-size:13px; min-width:36px; text-align:center; font-variant-numeric:tabular-nums;}
+  .settingsRow{ display:flex; gap:10px; align-items:center; justify-content:center; }
+  .speedWrap{ display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:4px 10px; }
+  .speedWrap button{ color:var(--ink-dim); font-size:16px; padding:4px 6px; }
+  #speedVal{ font-size:13px; min-width:36px; text-align:center; font-variant-numeric:tabular-nums; }
 
-  #toast{
-    position:fixed;
-    bottom:calc(18px + env(safe-area-inset-bottom,0px));
-    left:50%;
-    transform:translateX(-50%) translateY(10px);
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    color:var(--ink);
-    padding:10px 16px;
-    border-radius:10px;
-    font-size:13px;
-    opacity:0;
-    transition:opacity .2s ease, transform .2s ease;
-    pointer-events:none;
-    max-width:85vw;
-    text-align:center;
-    z-index:10;
-  }
-  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+  #toast{ position:fixed; bottom:calc(18px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%) translateY(10px); background:var(--surface-2); border:1px solid var(--line); color:var(--ink); padding:10px 16px; border-radius:10px; font-size:13px; opacity:0; transition:opacity .2s ease, transform .2s ease; pointer-events:none; max-width:85vw; text-align:center; z-index:10; }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-  ::selection{background:rgba(232,178,77,0.3);}
-  @media (prefers-reduced-motion: reduce){
-    *{transition:none !important;}
-  }
+  ::selection{ background:rgba(232,178,77,0.3); }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
 </style>
 </head>
 <body>
@@ -351,21 +146,29 @@
     <div class="controls">
       <div id="scrubber"><div id="scrubFill"></div></div>
       <div class="transport">
-        <button id="backBtn" title="Previous sentence" aria-label="Previous sentence">
+        <button id="backBtn" title="Previous" aria-label="Previous">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l9-6v12z"/></svg>
         </button>
         <button id="playBtn" title="Play" aria-label="Play">
           <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </button>
-        <button id="fwdBtn" title="Next sentence" aria-label="Next sentence">
+        <button id="fwdBtn" title="Next" aria-label="Next">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM5 6l9 6-9 6z"/></svg>
         </button>
       </div>
-      <div id="voiceSection">
-        <div id="voiceLabel">VOICE — tap to hear it</div>
-        <div id="voiceGrid"></div>
+
+      <div class="voiceRow">
+        <div class="voiceRowLabel">ON THIS PHONE — free, offline, tap to hear it</div>
+        <div class="voiceScroller" id="deviceVoiceGrid"></div>
         <div id="voiceNote"></div>
       </div>
+
+      <div class="voiceRow">
+        <div class="voiceRowLabel">STUDIO VOICES — cloud, uses your own API key</div>
+        <div class="voiceScroller" id="cloudVoiceGrid"></div>
+        <div id="cloudNote">Needs an API key set up once in Netlify — see the README for the two-minute setup.</div>
+      </div>
+
       <div class="settingsRow">
         <div class="speedWrap">
           <button id="slower" aria-label="Slower">−</button>
@@ -376,6 +179,7 @@
     </div>
   </div>
 
+  <audio id="cloudAudio" preload="none" playsinline></audio>
   <div id="toast"></div>
 </div>
 
@@ -388,7 +192,6 @@ const fileInput = document.getElementById('fileInput');
 const chooseBtn = document.getElementById('chooseBtn');
 const dropzone = document.getElementById('dropzone');
 const loadStatus = document.getElementById('loadStatus');
-const resumeBanner = document.getElementById('resumeBanner');
 const fileLabel = document.getElementById('fileLabel');
 const newFileBtn = document.getElementById('newFileBtn');
 const currentText = document.getElementById('currentText');
@@ -399,36 +202,39 @@ const backBtn = document.getElementById('backBtn');
 const fwdBtn = document.getElementById('fwdBtn');
 const scrubFill = document.getElementById('scrubFill');
 const scrubber = document.getElementById('scrubber');
-const voiceGrid = document.getElementById('voiceGrid');
+const deviceVoiceGrid = document.getElementById('deviceVoiceGrid');
+const cloudVoiceGrid = document.getElementById('cloudVoiceGrid');
 const voiceNote = document.getElementById('voiceNote');
 const speedVal = document.getElementById('speedVal');
 const toastEl = document.getElementById('toast');
 const pasteArea = document.getElementById('pasteArea');
 const pasteGo = document.getElementById('pasteGo');
+const cloudAudio = document.getElementById('cloudAudio');
 
-let chunks = [];           // {text, page}
+let deviceChunks = [];     // sentence-sized {text, page} — used by on-device voices
+let cloudChunks = [];      // paragraph-sized {text, page} — used by cloud voices (fewer, cheaper API calls)
+let chunks = [];           // whichever of the above is active right now
 let idx = 0;
 let speaking = false;
 let rate = 1.0;
-let voices = [];
-let shownVoices = [];      // the up-to-6 curated voices currently on screen
-let selectedVoiceName = localStorage.getItem('listen_voice') || null;
-let docKey = null;         // identifies the loaded document for resume
+let voices = [];           // on-device voices from the browser
+let engine = localStorage.getItem('listen_engine') || 'device'; // 'device' | 'cloud'
+let selectedVoiceName = localStorage.getItem('listen_voice') || null;  // device voice name
+let activeCloudVoice = null; // {key, provider, voiceId|voice, label}
+let docKey = null;
+let cloudCache = {};        // "<voiceKey>_<idx>" -> blob URL
 
 const ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
 const ICON_PAUSE = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
 
-function toast(msg, ms=2600){
+function toast(msg, ms=3200){
   toastEl.textContent = msg;
   toastEl.classList.add('show');
   clearTimeout(toastEl._t);
   toastEl._t = setTimeout(()=>toastEl.classList.remove('show'), ms);
 }
 
-/* ---------------- Voice curation ---------------- */
-// Apple/iOS English voice names mapped to the gender Apple ships them as.
-// Which of these actually show up depends entirely on what's installed on
-// the phone (Settings > Accessibility > Spoken Content > Voices).
+/* ================= Device voices (Web Speech API) ================= */
 const KNOWN_GENDER = {
   female: ['samantha','ava','allison','susan','victoria','karen','moira','tessa','catherine','martha','nicky','kate','serena','fiona','zoe','shelley','grandma','sandy'],
   male:   ['alex','daniel','fred','arthur','aaron','tom','gordon','lee','nathan','oliver','rishi','eddy','reed','albert','ralph','jamie','grandpa','junior','eric','gary']
@@ -442,13 +248,9 @@ function classifyGender(name){
 }
 function dedupeByName(arr){
   const seen = new Set();
-  return arr.filter(c=>{
-    if(seen.has(c.v.name)) return false;
-    seen.add(c.v.name);
-    return true;
-  });
+  return arr.filter(c=>{ if(seen.has(c.v.name)) return false; seen.add(c.v.name); return true; });
 }
-function pickVoices(all){
+function pickDeviceVoices(all){
   const en = all.filter(v=>/^en/i.test(v.lang));
   const pool = (en.length ? en : all).map(v=>({v, gender: classifyGender(v.name)}));
   const females = dedupeByName(pool.filter(c=>c.gender==='female'));
@@ -466,64 +268,148 @@ function pickVoices(all){
   }
   return chosen;
 }
-function genderGlyph(g){
-  return g==='female' ? '♀' : g==='male' ? '♂' : '•';
-}
-function renderVoiceGrid(){
-  shownVoices = pickVoices(voices);
-  voiceGrid.innerHTML = '';
-  shownVoices.forEach(c=>{
-    const btn = document.createElement('button');
-    btn.className = 'voicePill' + (c.v.name===selectedVoiceName ? ' active' : '');
-    btn.innerHTML = `<span class="g">${genderGlyph(c.gender)}</span><span>${shortVoiceName(c.v.name)}</span>`;
-    btn.addEventListener('click', ()=>selectVoice(c.v.name));
-    voiceGrid.appendChild(btn);
-  });
-  if(!selectedVoiceName && shownVoices.length){
-    selectedVoiceName = shownVoices[0].v.name;
-    localStorage.setItem('listen_voice', selectedVoiceName);
-    renderVoiceGrid();
-    return;
-  }
-  const femaleCount = shownVoices.filter(c=>c.gender==='female').length;
-  const maleCount = shownVoices.filter(c=>c.gender==='male').length;
-  if(shownVoices.length < 6 || femaleCount < 3 || maleCount < 3){
-    voiceNote.textContent = `This phone currently offers ${shownVoices.length} voice${shownVoices.length===1?'':'s'}. For more (free), go to Settings → Accessibility → Spoken Content → Voices → English, and download a few.`;
-  } else {
-    voiceNote.textContent = '';
-  }
-}
-function shortVoiceName(name){
-  return name.replace(/\s*\(.*?\)\s*/g, '').trim() || name;
-}
-function selectVoice(name){
-  selectedVoiceName = name;
-  localStorage.setItem('listen_voice', name);
-  renderVoiceGrid();
-  if(speaking){
-    restartCurrentUtterance();
-  } else {
-    speechSynthesis.cancel();
-    const v = voices.find(x=>x.name===name);
-    const u = new SpeechSynthesisUtterance('Hi, this is how I sound.');
-    if(v) u.voice = v;
-    u.rate = rate;
-    speechSynthesis.speak(u);
-  }
-}
+function genderGlyph(g){ return g==='female' ? '♀' : g==='male' ? '♂' : '•'; }
+function shortVoiceName(name){ return name.replace(/\s*\(.*?\)\s*/g, '').trim() || name; }
+
 function loadVoices(){
   voices = speechSynthesis.getVoices();
-  if(voices.length) renderVoiceGrid();
+  if(voices.length) renderVoiceGrids();
 }
 speechSynthesis.onvoiceschanged = loadVoices;
 loadVoices();
 
-/* ---------------- Speed ---------------- */
+/* ================= Cloud voices (ElevenLabs / OpenAI via Netlify function) ================= */
+function getCloudVoiceDefs(){
+  const defs = [
+    {key:'adam', provider:'elevenlabs', voiceId:'pNInz6obpgDQGcFmaJgB', label:'Adam', gender:'male'},
+    {key:'onyx', provider:'openai', voice:'onyx', label:'Onyx', gender:'male'}
+  ];
+  const clonedId = localStorage.getItem('cloned_voice_id');
+  if(clonedId) defs.push({key:'cloned', provider:'elevenlabs', voiceId: clonedId, label:'My voice', gender:'unknown'});
+  return defs;
+}
+function promptClonedVoice(){
+  const existing = localStorage.getItem('cloned_voice_id') || '';
+  const id = prompt('Paste your ElevenLabs Voice ID (Voice Library → your cloned voice → copy ID). Leave blank to remove it.', existing);
+  if(id === null) return;
+  if(id.trim()){
+    localStorage.setItem('cloned_voice_id', id.trim());
+    toast('Saved — tap "My voice" to use it.');
+  } else {
+    localStorage.removeItem('cloned_voice_id');
+  }
+  renderVoiceGrids();
+}
+
+/* ================= Rendering both voice rows ================= */
+function renderVoiceGrids(){
+  // device row
+  const picked = pickDeviceVoices(voices);
+  deviceVoiceGrid.innerHTML = '';
+  picked.forEach(c=>{
+    const btn = document.createElement('button');
+    btn.className = 'voicePill' + (engine==='device' && c.v.name===selectedVoiceName ? ' active' : '');
+    btn.innerHTML = `<span class="g">${genderGlyph(c.gender)}</span><span>${shortVoiceName(c.v.name)}</span>`;
+    btn.addEventListener('click', ()=>selectDeviceVoice(c.v.name));
+    deviceVoiceGrid.appendChild(btn);
+  });
+  if(!selectedVoiceName && picked.length){
+    selectedVoiceName = picked[0].v.name;
+    localStorage.setItem('listen_voice', selectedVoiceName);
+  }
+  const femaleCount = picked.filter(c=>c.gender==='female').length;
+  const maleCount = picked.filter(c=>c.gender==='male').length;
+  voiceNote.textContent = (picked.length < 6 || femaleCount < 3 || maleCount < 3)
+    ? `This phone currently offers ${picked.length} voice${picked.length===1?'':'s'}. For more (free): Settings → Accessibility → Spoken Content → Voices → English.`
+    : '';
+
+  // cloud row
+  const defs = getCloudVoiceDefs();
+  if(!activeCloudVoice){
+    const savedKey = localStorage.getItem('listen_cloud_voice');
+    activeCloudVoice = defs.find(d=>d.key===savedKey) || defs[0];
+  }
+  cloudVoiceGrid.innerHTML = '';
+  defs.forEach(v=>{
+    const btn = document.createElement('button');
+    btn.className = 'voicePill cloudPill' + (engine==='cloud' && activeCloudVoice && activeCloudVoice.key===v.key ? ' active' : '');
+    btn.innerHTML = `<span class="g">☁</span><span>${v.label}</span>`;
+    btn.addEventListener('click', ()=>selectCloudVoice(v));
+    cloudVoiceGrid.appendChild(btn);
+  });
+  const addBtn = document.createElement('button');
+  addBtn.className = 'voicePill addPill';
+  addBtn.textContent = localStorage.getItem('cloned_voice_id') ? '✎ edit my voice' : '+ add my voice';
+  addBtn.addEventListener('click', promptClonedVoice);
+  cloudVoiceGrid.appendChild(addBtn);
+}
+
+/* ================= Engine switching ================= */
+function remapIndexAcross(oldArr, oldIdx, newArr){
+  if(!oldArr.length || !newArr.length) return 0;
+  const frac = oldIdx/(oldArr.length-1||1);
+  return Math.min(newArr.length-1, Math.round(frac*(newArr.length-1)));
+}
+function switchEngineOnly(newEngine){
+  if(engine === newEngine) return;
+  speechSynthesis.cancel();
+  cloudAudio.pause();
+  const oldArr = chunks;
+  const newArr = newEngine==='device' ? deviceChunks : cloudChunks;
+  idx = (oldArr.length && newArr.length) ? remapIndexAcross(oldArr, idx, newArr) : 0;
+  engine = newEngine;
+  chunks = newArr;
+  localStorage.setItem('listen_engine', engine);
+  if(chunks.length) renderChunk();
+}
+function selectDeviceVoice(name){
+  selectedVoiceName = name;
+  localStorage.setItem('listen_voice', name);
+  const wasSpeaking = speaking;
+  switchEngineOnly('device');
+  renderVoiceGrids();
+  if(wasSpeaking) continueIfSpeaking();
+  else previewDeviceVoice(name);
+}
+function selectCloudVoice(voice){
+  activeCloudVoice = voice;
+  localStorage.setItem('listen_cloud_voice', voice.key);
+  const wasSpeaking = speaking;
+  switchEngineOnly('cloud');
+  renderVoiceGrids();
+  if(wasSpeaking) continueIfSpeaking();
+  else previewCloudVoice(voice);
+}
+function previewDeviceVoice(name){
+  speechSynthesis.cancel();
+  const v = voices.find(x=>x.name===name);
+  const u = new SpeechSynthesisUtterance('Hi, this is how I sound.');
+  if(v) u.voice = v;
+  u.rate = rate;
+  speechSynthesis.speak(u);
+}
+async function previewCloudVoice(voice){
+  try{
+    cloudAudio.pause();
+    const resp = await fetchTTS(voice, 'Hi, this is how I sound.');
+    if(!resp.ok){ toast(await describeError(resp)); return; }
+    const blob = await resp.blob();
+    cloudAudio.src = URL.createObjectURL(blob);
+    cloudAudio.playbackRate = rate;
+    cloudAudio.play();
+  }catch(err){ toast('Could not reach the voice service: ' + err.message); }
+}
+
+/* ================= Speed ================= */
 function setRate(r){
   rate = Math.min(2, Math.max(0.6, Math.round(r*10)/10));
   speedVal.textContent = rate.toFixed(1)+'×';
   localStorage.setItem('listen_rate', rate);
-  if(speaking) restartCurrentUtterance();
+  if(engine==='cloud'){
+    cloudAudio.playbackRate = rate;
+  } else if(speaking){
+    restartCurrentUtterance();
+  }
 }
 document.getElementById('slower').addEventListener('click', ()=>setRate(rate-0.1));
 document.getElementById('faster').addEventListener('click', ()=>setRate(rate+0.1));
@@ -532,24 +418,13 @@ document.getElementById('faster').addEventListener('click', ()=>setRate(rate+0.1
   if(savedRate) setRate(savedRate); else setRate(1.0);
 }
 
-/* ---------------- File handling ---------------- */
+/* ================= File handling ================= */
 chooseBtn.addEventListener('click', ()=>fileInput.click());
-fileInput.addEventListener('change', e=>{
-  if(e.target.files[0]) loadFile(e.target.files[0]);
-});
-['dragover','dragenter'].forEach(ev=>dropzone.addEventListener(ev, e=>{
-  e.preventDefault(); dropzone.classList.add('drag');
-}));
-['dragleave','drop'].forEach(ev=>dropzone.addEventListener(ev, e=>{
-  e.preventDefault(); dropzone.classList.remove('drag');
-}));
-dropzone.addEventListener('drop', e=>{
-  const f = e.dataTransfer.files[0];
-  if(f) loadFile(f);
-});
-pasteGo.addEventListener('click', ()=>{
-  loadPastedText(pasteArea.value);
-});
+fileInput.addEventListener('change', e=>{ if(e.target.files[0]) loadFile(e.target.files[0]); });
+['dragover','dragenter'].forEach(ev=>dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev=>dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.remove('drag'); }));
+dropzone.addEventListener('drop', e=>{ const f = e.dataTransfer.files[0]; if(f) loadFile(f); });
+pasteGo.addEventListener('click', ()=>loadPastedText(pasteArea.value));
 newFileBtn.addEventListener('click', ()=>{
   stopSpeaking();
   reader.style.display = 'none';
@@ -558,23 +433,36 @@ newFileBtn.addEventListener('click', ()=>{
   fileLabel.textContent = '';
   loadStatus.textContent = '';
   pasteArea.value = '';
-  resumeBanner.style.display = 'none';
 });
 
-function openReaderWithChunks(rawChunks, label, key){
-  chunks = rawChunks;
+function groupForCloud(deviceArr, maxLen=550){
+  const out = [];
+  let buf = '', page = deviceArr.length ? deviceArr[0].page : null;
+  deviceArr.forEach(c=>{
+    if(buf && (buf.length + c.text.length + 1) > maxLen){
+      out.push({text:buf.trim(), page});
+      buf = c.text; page = c.page;
+    } else {
+      buf = buf ? buf + ' ' + c.text : c.text;
+    }
+  });
+  if(buf) out.push({text:buf.trim(), page});
+  return out;
+}
+
+function openReaderWithChunks(rawDeviceChunks, label, key){
+  deviceChunks = rawDeviceChunks;
+  cloudChunks = groupForCloud(rawDeviceChunks);
+  chunks = engine==='cloud' ? cloudChunks : deviceChunks;
   docKey = key;
-  idx = 0;
-  const savedIdx = parseInt(localStorage.getItem(docKey) || '0', 10);
+  const savedIdx = parseInt(localStorage.getItem(docKey+':'+engine) || '0', 10);
+  idx = (savedIdx > 0 && savedIdx < chunks.length - 1) ? savedIdx : 0;
   fileLabel.textContent = label;
   loadStatus.textContent = '';
   dropScreen.style.display = 'none';
   reader.style.display = 'flex';
   newFileBtn.style.display = '';
-  if(savedIdx > 0 && savedIdx < chunks.length - 1){
-    idx = savedIdx;
-    toast(`Picked up where you left off (${Math.round(idx/chunks.length*100)}% through).`);
-  }
+  if(idx > 0) toast(`Picked up where you left off (${Math.round(idx/chunks.length*100)}% through).`);
   renderChunk();
 }
 
@@ -644,18 +532,14 @@ function splitIntoChunks(pageText){
   sentences.forEach(s=>{
     s = s.trim();
     if(!s) return;
-    if((buf + ' ' + s).length > 220 && buf){
-      out.push(buf.trim());
-      buf = s;
-    } else {
-      buf = buf ? buf + ' ' + s : s;
-    }
+    if((buf + ' ' + s).length > 220 && buf){ out.push(buf.trim()); buf = s; }
+    else { buf = buf ? buf + ' ' + s : s; }
   });
   if(buf) out.push(buf.trim());
   return out;
 }
 
-/* ---------------- Rendering ---------------- */
+/* ================= Rendering the reading view ================= */
 function renderChunk(){
   const prev = chunks[idx-1] ? chunks[idx-1].text : '';
   const now = chunks[idx] ? chunks[idx].text : '';
@@ -669,13 +553,11 @@ function renderChunk(){
   const c = chunks[idx];
   pageTag.textContent = c ? (c.page ? `Page ${c.page} · ${idx+1} of ${chunks.length}` : `${idx+1} of ${chunks.length}`) : '';
   scrubFill.style.width = (chunks.length ? (idx/(chunks.length-1||1))*100 : 0) + '%';
-  if(docKey) localStorage.setItem(docKey, idx);
+  if(docKey) localStorage.setItem(docKey+':'+engine, idx);
 }
-function escapeHtml(s){
-  return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-}
+function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-/* ---------------- Speech engine ---------------- */
+/* ================= Device speech engine ================= */
 function speakChunk(){
   if(idx >= chunks.length){ stopSpeaking(); return; }
   speechSynthesis.cancel();
@@ -684,33 +566,94 @@ function speakChunk(){
   const chosen = voices.find(v=>v.name===selectedVoiceName);
   if(chosen) u.voice = chosen;
   u.onend = ()=>{
-    if(!speaking) return;
+    if(!speaking || engine!=='device') return;
     idx++;
     if(idx >= chunks.length){ stopSpeaking(); toast('Finished.'); return; }
     renderChunk();
     speakChunk();
   };
-  u.onerror = (e)=>{
-    if(e.error === 'interrupted' || e.error === 'canceled') return;
-    console.error(e);
-  };
+  u.onerror = (e)=>{ if(e.error==='interrupted' || e.error==='canceled') return; console.error(e); };
   speechSynthesis.speak(u);
   renderChunk();
 }
-function restartCurrentUtterance(){
+function restartCurrentUtterance(){ if(speaking && engine==='device'){ speechSynthesis.cancel(); speakChunk(); } }
+
+/* ================= Cloud speech engine ================= */
+function fetchTTS(voice, text){
+  return fetch('/.netlify/functions/tts', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ provider: voice.provider, text, voiceId: voice.voiceId, voice: voice.voice })
+  });
+}
+async function describeError(resp){
+  const body = await resp.text().catch(()=> '');
+  if(resp.status === 500 && /API_KEY is not set/.test(body)){
+    return "That voice needs an API key set up in Netlify first — see the README.";
+  }
+  return 'Voice service error (' + resp.status + ').';
+}
+async function getCloudAudioUrl(i){
+  const voice = activeCloudVoice;
+  const cacheKey = voice.key + '_' + i;
+  if(cloudCache[cacheKey]) return cloudCache[cacheKey];
+  const resp = await fetchTTS(voice, cloudChunks[i].text);
+  if(!resp.ok) throw new Error(await describeError(resp));
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  cloudCache[cacheKey] = url;
+  return url;
+}
+function prefetchCloudChunk(i){
+  if(i < 0 || i >= cloudChunks.length) return;
+  const voice = activeCloudVoice;
+  const cacheKey = voice.key + '_' + i;
+  if(cloudCache[cacheKey]) return;
+  fetchTTS(voice, cloudChunks[i].text)
+    .then(r=> r.ok ? r.blob() : null)
+    .then(b=>{ if(b) cloudCache[cacheKey] = URL.createObjectURL(b); })
+    .catch(()=>{});
+}
+async function playCloudChunkInner(){
+  if(idx >= cloudChunks.length){ stopSpeaking(); toast('Finished.'); return; }
+  renderChunk();
+  playBtn.classList.add('loading');
+  try{
+    const url = await getCloudAudioUrl(idx);
+    if(!speaking || engine!=='cloud') return; // user stopped/switched while this was loading
+    playBtn.classList.remove('loading');
+    cloudAudio.src = url;
+    cloudAudio.playbackRate = rate;
+    await cloudAudio.play();
+    prefetchCloudChunk(idx+1);
+  }catch(err){
+    playBtn.classList.remove('loading');
+    toast(err.message || 'Could not play that voice.');
+    stopSpeaking();
+  }
+}
+cloudAudio.onended = ()=>{
+  if(!speaking || engine!=='cloud') return;
+  idx++;
+  playCloudChunkInner();
+};
+
+/* ================= Shared transport ================= */
+function continueIfSpeaking(){
   if(!speaking) return;
-  speechSynthesis.cancel();
-  speakChunk();
+  if(engine==='device') speakChunk(); else playCloudChunkInner();
 }
 function startSpeaking(){
   speaking = true;
   playIcon.innerHTML = ICON_PAUSE;
   playBtn.setAttribute('aria-label','Pause');
-  speakChunk();
+  continueIfSpeaking();
 }
 function stopSpeaking(){
   speaking = false;
   speechSynthesis.cancel();
+  cloudAudio.pause();
+  playBtn.classList.remove('loading');
   playIcon.innerHTML = ICON_PLAY;
   playBtn.setAttribute('aria-label','Play');
 }
@@ -723,13 +666,13 @@ backBtn.addEventListener('click', ()=>{
   if(!chunks.length) return;
   idx = Math.max(0, idx-1);
   renderChunk();
-  if(speaking) speakChunk();
+  continueIfSpeaking();
 });
 fwdBtn.addEventListener('click', ()=>{
   if(!chunks.length) return;
   idx = Math.min(chunks.length-1, idx+1);
   renderChunk();
-  if(speaking) speakChunk();
+  continueIfSpeaking();
 });
 scrubber.addEventListener('click', (e)=>{
   if(!chunks.length) return;
@@ -737,7 +680,7 @@ scrubber.addEventListener('click', (e)=>{
   const pct = Math.min(1, Math.max(0, (e.clientX-rect.left)/rect.width));
   idx = Math.round(pct*(chunks.length-1));
   renderChunk();
-  if(speaking) speakChunk();
+  continueIfSpeaking();
 });
 
 document.addEventListener('keydown', (e)=>{
@@ -747,9 +690,9 @@ document.addEventListener('keydown', (e)=>{
   if(e.code === 'ArrowLeft'){ backBtn.click(); }
 });
 
-// iOS Safari can pause or stop speech once the screen locks or you switch
-// apps — that's a platform limitation of the Web Speech API, not a bug here.
-window.addEventListener('beforeunload', ()=>{ speechSynthesis.cancel(); });
+window.addEventListener('beforeunload', ()=>{ speechSynthesis.cancel(); cloudAudio.pause(); });
+
+renderVoiceGrids();
 </script>
 </body>
 </html>

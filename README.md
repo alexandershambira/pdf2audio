@@ -1,86 +1,75 @@
-# Listen — PDF to audio reader
+# Listen — PDF / Word / text to audio reader
 
-A small personal web app: pick a PDF, it reads the text aloud with the
-current sentence highlighted, and it remembers where you stopped in
-each file. No build step, no server — it's a handful of static files.
+A personal web app: pick a PDF, Word doc, text file, or paste text in,
+and it's read aloud with the current line highlighted. It remembers
+where you stopped in each document.
+
+Two sets of voices:
+- **On this phone** — your iPhone's built‑in voices. Free, works
+  offline, no setup.
+- **Studio voices** — Adam (ElevenLabs), Onyx (OpenAI), or a voice you
+  clone yourself. Much more natural, but needs a one‑time setup below
+  and a small per‑character cost from whichever service you use.
 
 ## Files
-- `index.html` — the whole app (PDF parsing + text‑to‑speech)
-- `manifest.json`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` — so it can be added to your home screen like an app
+- `index.html` — the app itself
+- `manifest.json`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` — home‑screen install
+- `netlify/functions/tts.js` — a small server‑side function that talks to ElevenLabs/OpenAI so your API key never sits in the browser
+- `netlify.toml` — tells Netlify where that function lives
 
-## Put it on GitHub
-```bash
-cd pdf2audio
-git init
-git add .
-git commit -m "Listen: PDF to audio reader"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
-git push -u origin main
-```
+## 1. Put it on GitHub
+Create a new repository and upload **all** of these files and folders
+(including the `netlify` folder with `tts.js` inside it) through
+GitHub's "Upload files" button on the repo page — keep the folder
+structure exactly as it is, don't flatten it.
 
-## Deploy on Netlify
-1. Netlify → **Add new site → Import an existing project**
-2. Pick the GitHub repo you just pushed
-3. Leave the build command empty and set the publish directory to `/`
-   (there's nothing to build — it's already static)
-4. Deploy. Netlify gives you a `https://your-app.netlify.app` URL.
+## 2. Deploy on Netlify
+1. Netlify → **Add new site → Import an existing project** → pick your GitHub repo
+2. Leave build settings as Netlify auto‑detects them (the `netlify.toml` already says "no build, publish directory is `/`, functions live in `netlify/functions`")
+3. Click **Deploy site**
 
-(You can also skip GitHub entirely and drag the `pdf2audio` folder
-straight onto Netlify's "Deploy manually" box — either works.)
+At this point the app works with the on‑device voices already — the
+cloud voices will show a message until you do the next step.
 
-## Install it on your iPhone
-1. Open the Netlify URL in **Safari** (it has to be Safari, not Chrome, for the install prompt to work)
-2. Tap the Share icon → **Add to Home Screen**
-3. It now opens full‑screen, with its own icon, no browser bar
+## 3. Turn on the studio voices (optional, but this is what you asked for)
 
-## How it works
-- **pdf.js** extracts text from PDFs, **mammoth.js** extracts text
-  from Word (`.docx`) files, and plain `.txt` files are read
-  directly — all in your browser, nothing is uploaded anywhere.
-  You can also just paste text straight in instead of using a file.
-- The text is split into sentence‑sized chunks and read with the
-  **Web Speech API** (`speechSynthesis`), using whichever voice you
-  tap in the voice row.
-- Your spot in each document is saved in the browser's local storage
-  (keyed by file name + size, or by the pasted text itself), so
-  reopening the same thing offers to resume.
+### Adam (ElevenLabs)
+1. Sign up at **elevenlabs.io** (there's a free tier with limited characters per month)
+2. Go to your **Profile → API Keys** and copy your key
+3. In Netlify: open your site → **Site configuration → Environment variables → Add a variable**
+   - Key: `ELEVENLABS_API_KEY`
+   - Value: *(paste the key)*
+4. Netlify → **Deploys → Trigger deploy → Deploy site** (env vars only take effect after a redeploy)
+5. Adam will now work. If it ever errors, open ElevenLabs' **Voice Library**, find "Adam", copy his current Voice ID, and tell me — the function has a default ID baked in but ElevenLabs could change it.
 
-## About the 6 voices
-There's no way for a web page to ship its own text‑to‑speech voices —
-it has to use whatever voices are already installed on your iPhone.
-The app looks at everything installed, picks up to 3 recognisably
-female and 3 recognisably male voices, and shows them as tappable
-pills; tap one to hear a short sample in that voice.
+### Onyx (OpenAI)
+1. Sign up at **platform.openai.com** and add a payment method (TTS is billed per character — a typical document costs a few cents)
+2. **API keys** in the left sidebar → **Create new secret key** → copy it
+3. In Netlify, add another environment variable:
+   - Key: `OPENAI_API_KEY`
+   - Value: *(paste the key)*
+4. Trigger a redeploy (same as step 4 above)
 
-Most iPhones only ship with one or two English voices out of the
-box, so you'll likely see a note under the voice row the first time
-saying how many are currently available. To get the full 3‑and‑3
-spread:
-1. **Settings → Accessibility → Spoken Content → Voices → English**
-2. Tap into any of the listed voices (Ava, Samantha, Tom, Daniel,
-   Arthur, Nicky, Aaron, Karen, Moira, etc. are good varied ones) and
-   download it — each is free, just a one‑time download (roughly
-   50–200MB per voice, so Wi‑Fi is worth it)
-3. Reopen the app — the new voices show up automatically
+### Your own cloned voice (ElevenLabs)
+1. In ElevenLabs, go to **Voice Lab → Add Voice → Instant Voice Clone**
+2. Upload 1–2 minutes of clean audio of the voice you want to clone (your own voice, with your own permission — don't clone anyone else's voice without their consent)
+3. Once it's created, open it in the **Voice Library** and copy its **Voice ID**
+4. In the app, tap **"+ add my voice"** at the end of the Studio Voices row, and paste that ID in
+   - No redeploy needed for this part — it's stored right in the app on your phone
 
-There's no built‑in way to control a *specific* age — Apple doesn't
-expose that — but the voices do vary noticeably in pitch and pacing,
-which is what gives the "mixed ages" feel.
+## Everyday use
+- Tap any pill in either voice row to hear a short sample and make it the active voice
+- The **−** / **+** control changes playback speed from 0.6× to 2× and applies live to whichever voice is currently talking
+- Device voices restart the current sentence when you change speed; studio voices change speed instantly without interruption
+- Studio voices read in bigger chunks (a few sentences at a time) rather than one sentence at a time, to keep the number of paid API calls down — the highlighted text will jump in slightly bigger steps than with device voices
 
-## Known iOS limitations (Apple's, not fixable from here)
-- Speech needs a user tap to start — that's why there's a visible
-  Play button rather than autoplay.
-- If the screen locks or you switch apps, iOS Safari will usually
-  pause the speech — there's no public API for this page to keep it
-  going in the background the way Music or Podcasts can. Keep the
-  screen on while listening.
-- Scanned PDFs (photos of pages, with no real text layer) won't have
-  anything to read — the app will tell you if it can't find text.
+## Known limitations
+- **iOS Safari limitation (device voices only):** if the screen locks or you switch apps, the on‑device voice usually pauses — there's no public API for a web page to keep it going in the background. Cloud voices use a real `<audio>` element, which behaves a bit better but still isn't guaranteed to survive a locked screen on an installed home‑screen app.
+- **Studio voices cost money per character**, billed directly by ElevenLabs/OpenAI to whatever payment method you put on your own account — this app doesn't mark anything up, your key is only ever used by your own function.
+- Scanned PDFs (photos of pages, no real text layer) have nothing to extract — you'll get a message saying so.
+- The ElevenLabs "Adam" voice ID is hard‑coded as a sensible default; if ElevenLabs ever retires or renames it, grab the current ID from their Voice Library and I can update the function.
 
 ## Ideas if you want to extend it later
-- A "skip to next page" button in addition to next/previous sentence
-- Swapping `speechSynthesis` for a cloud TTS API (e.g. via a Netlify
-  function) for consistent, higher‑quality voices on any device and
-  background playback that survives the screen locking
+- A visible running cost counter (ElevenLabs/OpenAI both report character counts you could log)
 - Support for `.epub` files
+- Pre‑generating and caching a whole chapter's audio ahead of time so a flaky connection doesn't interrupt playback
