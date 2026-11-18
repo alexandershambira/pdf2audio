@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <style>
   :root{
     --bg:#1B1D22;
@@ -86,20 +87,21 @@
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    padding:32px;
+    padding:28px;
     text-align:center;
-    gap:22px;
+    gap:18px;
+    overflow-y:auto;
   }
   #dropScreen h1{
     font-family:'Source Serif 4',serif;
     font-weight:600;
-    font-size:clamp(28px,6vw,42px);
+    font-size:clamp(26px,5.6vw,40px);
     line-height:1.15;
     margin:0;
-    max-width:12ch;
+    max-width:13ch;
   }
   #dropScreen h1 span{color:var(--amber);}
-  #dropScreen p{
+  #dropScreen p.lede{
     color:var(--ink-dim);
     font-size:15px;
     max-width:38ch;
@@ -109,8 +111,8 @@
   .dropzone{
     border:1.5px dashed var(--line);
     border-radius:18px;
-    padding:28px 32px;
-    width:min(100%,360px);
+    padding:26px 30px;
+    width:min(100%,380px);
     transition:border-color .15s ease, background .15s ease;
   }
   .dropzone.drag{border-color:var(--amber); background:rgba(232,178,77,0.06);}
@@ -123,7 +125,7 @@
     font-size:15px;
     padding:12px 26px;
     border-radius:999px;
-    margin-top:6px;
+    margin-top:4px;
   }
   #chooseBtn:active{opacity:0.85;}
   #dropHint{font-size:13px; color:var(--ink-dim); margin-top:10px;}
@@ -140,6 +142,41 @@
   #resumeBanner button{
     background:none;border:none;color:var(--amber);font-family:inherit;font-size:13px;font-weight:600;padding:0 0 0 6px;
   }
+
+  .divider{
+    display:flex; align-items:center; gap:10px;
+    width:min(100%,380px); color:var(--ink-dim); font-size:12px;
+  }
+  .divider::before, .divider::after{content:''; flex:1; height:1px; background:var(--line);}
+
+  #pasteBox{
+    width:min(100%,380px);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  #pasteArea{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--ink);
+    border-radius:12px;
+    padding:12px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    resize:vertical;
+  }
+  #pasteArea:focus{outline:none; border-color:var(--amber);}
+  #pasteGo{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    padding:10px 18px;
+    border-radius:999px;
+  }
+  #pasteGo:active{background:var(--surface-2);}
 
   /* ---------- Reader screen ---------- */
   #reader{
@@ -218,25 +255,39 @@
   #playBtn svg{width:24px;height:24px;color:#1B1D22;}
   .transport button:active{opacity:0.7;}
 
+  #voiceSection{margin-bottom:12px;}
+  #voiceLabel{font-size:11px; color:var(--ink-dim); letter-spacing:.03em; margin-bottom:6px;}
+  #voiceGrid{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .voicePill{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--surface-2);
+    border:1.5px solid var(--line);
+    color:var(--ink);
+    font-family:inherit;
+    font-size:13px;
+    padding:8px 14px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  .voicePill.active{border-color:var(--amber); color:var(--amber);}
+  .voicePill .g{color:var(--ink-dim); font-size:12px;}
+  .voicePill.active .g{color:var(--amber);}
+  #voiceNote{font-size:11.5px; color:var(--ink-dim); margin-top:6px; line-height:1.4;}
+
   .settingsRow{
     display:flex;
     gap:10px;
     align-items:center;
-    justify-content:space-between;
-  }
-  .settingsRow select, .settingsRow .speedWrap{
-    flex:1;
-    min-width:0;
-  }
-  select{
-    width:100%;
-    background:var(--surface-2);
-    color:var(--ink);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:9px 10px;
-    font-family:inherit;
-    font-size:13px;
+    justify-content:center;
   }
   .speedWrap{display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:4px 10px;}
   .speedWrap button{color:var(--ink-dim); font-size:16px; padding:4px 6px;}
@@ -278,12 +329,17 @@
   </header>
 
   <div id="dropScreen">
-    <h1>Turn any PDF into <span>something to listen to.</span></h1>
-    <p>Pick a PDF — a report, a standard, a set of notes — and it's read aloud right here, with highlighting so you can follow along.</p>
+    <h1>Turn text into <span>something to listen to.</span></h1>
+    <p class="lede">A PDF, a Word file, a plain text file, or anything you paste in — read aloud, with highlighting so you can follow along.</p>
     <div class="dropzone" id="dropzone">
-      <input type="file" id="fileInput" accept="application/pdf" style="display:none;">
-      <button id="chooseBtn">Choose a PDF</button>
-      <div id="dropHint">or drag one in</div>
+      <input type="file" id="fileInput" accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;">
+      <button id="chooseBtn">Choose a file</button>
+      <div id="dropHint">PDF, .docx, or .txt — or drag one in</div>
+    </div>
+    <div class="divider">or</div>
+    <div id="pasteBox">
+      <textarea id="pasteArea" rows="4" placeholder="Paste or type text here…"></textarea>
+      <button id="pasteGo">Read this text</button>
     </div>
     <div id="loadStatus"></div>
     <div id="resumeBanner"></div>
@@ -305,8 +361,12 @@
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM5 6l9 6-9 6z"/></svg>
         </button>
       </div>
+      <div id="voiceSection">
+        <div id="voiceLabel">VOICE — tap to hear it</div>
+        <div id="voiceGrid"></div>
+        <div id="voiceNote"></div>
+      </div>
       <div class="settingsRow">
-        <select id="voiceSelect"></select>
         <div class="speedWrap">
           <button id="slower" aria-label="Slower">−</button>
           <span id="speedVal">1.0×</span>
@@ -339,18 +399,21 @@ const backBtn = document.getElementById('backBtn');
 const fwdBtn = document.getElementById('fwdBtn');
 const scrubFill = document.getElementById('scrubFill');
 const scrubber = document.getElementById('scrubber');
-const voiceSelect = document.getElementById('voiceSelect');
+const voiceGrid = document.getElementById('voiceGrid');
+const voiceNote = document.getElementById('voiceNote');
 const speedVal = document.getElementById('speedVal');
 const toastEl = document.getElementById('toast');
+const pasteArea = document.getElementById('pasteArea');
+const pasteGo = document.getElementById('pasteGo');
 
 let chunks = [];           // {text, page}
 let idx = 0;
 let speaking = false;
-let paused = false;
 let rate = 1.0;
 let voices = [];
-let docKey = null;         // identifies the loaded pdf for resume
-let utterTimer = null;
+let shownVoices = [];      // the up-to-6 curated voices currently on screen
+let selectedVoiceName = localStorage.getItem('listen_voice') || null;
+let docKey = null;         // identifies the loaded document for resume
 
 const ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
 const ICON_PAUSE = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
@@ -362,28 +425,98 @@ function toast(msg, ms=2600){
   toastEl._t = setTimeout(()=>toastEl.classList.remove('show'), ms);
 }
 
-/* ---------------- Voice list ---------------- */
+/* ---------------- Voice curation ---------------- */
+// Apple/iOS English voice names mapped to the gender Apple ships them as.
+// Which of these actually show up depends entirely on what's installed on
+// the phone (Settings > Accessibility > Spoken Content > Voices).
+const KNOWN_GENDER = {
+  female: ['samantha','ava','allison','susan','victoria','karen','moira','tessa','catherine','martha','nicky','kate','serena','fiona','zoe','shelley','grandma','sandy'],
+  male:   ['alex','daniel','fred','arthur','aaron','tom','gordon','lee','nathan','oliver','rishi','eddy','reed','albert','ralph','jamie','grandpa','junior','eric','gary']
+};
+function classifyGender(name){
+  const n = name.toLowerCase();
+  for(const g of ['female','male']){
+    if(KNOWN_GENDER[g].some(k=>n.includes(k))) return g;
+  }
+  return 'unknown';
+}
+function dedupeByName(arr){
+  const seen = new Set();
+  return arr.filter(c=>{
+    if(seen.has(c.v.name)) return false;
+    seen.add(c.v.name);
+    return true;
+  });
+}
+function pickVoices(all){
+  const en = all.filter(v=>/^en/i.test(v.lang));
+  const pool = (en.length ? en : all).map(v=>({v, gender: classifyGender(v.name)}));
+  const females = dedupeByName(pool.filter(c=>c.gender==='female'));
+  const males   = dedupeByName(pool.filter(c=>c.gender==='male'));
+  const unknown = dedupeByName(pool.filter(c=>c.gender==='unknown'));
+  let chosen = [...females.slice(0,3), ...males.slice(0,3)];
+  if(chosen.length < 6){
+    const used = new Set(chosen.map(c=>c.v.name));
+    chosen = chosen.concat(unknown.filter(c=>!used.has(c.v.name)).slice(0, 6-chosen.length));
+  }
+  if(chosen.length < 6){
+    const used = new Set(chosen.map(c=>c.v.name));
+    const leftovers = dedupeByName(pool.filter(c=>!used.has(c.v.name)));
+    chosen = chosen.concat(leftovers.slice(0, 6-chosen.length));
+  }
+  return chosen;
+}
+function genderGlyph(g){
+  return g==='female' ? '♀' : g==='male' ? '♂' : '•';
+}
+function renderVoiceGrid(){
+  shownVoices = pickVoices(voices);
+  voiceGrid.innerHTML = '';
+  shownVoices.forEach(c=>{
+    const btn = document.createElement('button');
+    btn.className = 'voicePill' + (c.v.name===selectedVoiceName ? ' active' : '');
+    btn.innerHTML = `<span class="g">${genderGlyph(c.gender)}</span><span>${shortVoiceName(c.v.name)}</span>`;
+    btn.addEventListener('click', ()=>selectVoice(c.v.name));
+    voiceGrid.appendChild(btn);
+  });
+  if(!selectedVoiceName && shownVoices.length){
+    selectedVoiceName = shownVoices[0].v.name;
+    localStorage.setItem('listen_voice', selectedVoiceName);
+    renderVoiceGrid();
+    return;
+  }
+  const femaleCount = shownVoices.filter(c=>c.gender==='female').length;
+  const maleCount = shownVoices.filter(c=>c.gender==='male').length;
+  if(shownVoices.length < 6 || femaleCount < 3 || maleCount < 3){
+    voiceNote.textContent = `This phone currently offers ${shownVoices.length} voice${shownVoices.length===1?'':'s'}. For more (free), go to Settings → Accessibility → Spoken Content → Voices → English, and download a few.`;
+  } else {
+    voiceNote.textContent = '';
+  }
+}
+function shortVoiceName(name){
+  return name.replace(/\s*\(.*?\)\s*/g, '').trim() || name;
+}
+function selectVoice(name){
+  selectedVoiceName = name;
+  localStorage.setItem('listen_voice', name);
+  renderVoiceGrid();
+  if(speaking){
+    restartCurrentUtterance();
+  } else {
+    speechSynthesis.cancel();
+    const v = voices.find(x=>x.name===name);
+    const u = new SpeechSynthesisUtterance('Hi, this is how I sound.');
+    if(v) u.voice = v;
+    u.rate = rate;
+    speechSynthesis.speak(u);
+  }
+}
 function loadVoices(){
   voices = speechSynthesis.getVoices();
-  if(!voices.length) return;
-  const preferred = voices.filter(v=>/en/i.test(v.lang));
-  const list = preferred.length ? preferred : voices;
-  voiceSelect.innerHTML = '';
-  list.forEach((v,i)=>{
-    const opt = document.createElement('option');
-    opt.value = v.name;
-    opt.textContent = v.name + (v.lang ? ' — ' + v.lang : '');
-    voiceSelect.appendChild(opt);
-  });
-  const saved = localStorage.getItem('listen_voice');
-  if(saved && list.some(v=>v.name===saved)) voiceSelect.value = saved;
+  if(voices.length) renderVoiceGrid();
 }
 speechSynthesis.onvoiceschanged = loadVoices;
 loadVoices();
-voiceSelect.addEventListener('change', ()=>{
-  localStorage.setItem('listen_voice', voiceSelect.value);
-  if(speaking){ restartCurrentUtterance(); }
-});
 
 /* ---------------- Speed ---------------- */
 function setRate(r){
@@ -402,7 +535,7 @@ document.getElementById('faster').addEventListener('click', ()=>setRate(rate+0.1
 /* ---------------- File handling ---------------- */
 chooseBtn.addEventListener('click', ()=>fileInput.click());
 fileInput.addEventListener('change', e=>{
-  if(e.target.files[0]) loadPdf(e.target.files[0]);
+  if(e.target.files[0]) loadFile(e.target.files[0]);
 });
 ['dragover','dragenter'].forEach(ev=>dropzone.addEventListener(ev, e=>{
   e.preventDefault(); dropzone.classList.add('drag');
@@ -412,7 +545,10 @@ fileInput.addEventListener('change', e=>{
 }));
 dropzone.addEventListener('drop', e=>{
   const f = e.dataTransfer.files[0];
-  if(f && f.type === 'application/pdf') loadPdf(f);
+  if(f) loadFile(f);
+});
+pasteGo.addEventListener('click', ()=>{
+  loadPastedText(pasteArea.value);
 });
 newFileBtn.addEventListener('click', ()=>{
   stopSpeaking();
@@ -421,47 +557,84 @@ newFileBtn.addEventListener('click', ()=>{
   newFileBtn.style.display = 'none';
   fileLabel.textContent = '';
   loadStatus.textContent = '';
+  pasteArea.value = '';
   resumeBanner.style.display = 'none';
 });
 
-async function loadPdf(file){
-  loadStatus.textContent = 'Reading ' + file.name + '…';
-  fileLabel.textContent = file.name;
+function openReaderWithChunks(rawChunks, label, key){
+  chunks = rawChunks;
+  docKey = key;
+  idx = 0;
+  const savedIdx = parseInt(localStorage.getItem(docKey) || '0', 10);
+  fileLabel.textContent = label;
+  loadStatus.textContent = '';
+  dropScreen.style.display = 'none';
+  reader.style.display = 'flex';
+  newFileBtn.style.display = '';
+  if(savedIdx > 0 && savedIdx < chunks.length - 1){
+    idx = savedIdx;
+    toast(`Picked up where you left off (${Math.round(idx/chunks.length*100)}% through).`);
+  }
+  renderChunk();
+}
+
+function loadPastedText(text){
+  text = (text||'').replace(/\s+/g,' ').trim();
+  if(!text){ toast('Paste or type some text first.'); return; }
+  const rawChunks = splitIntoChunks(text).map(t=>({text:t, page:null}));
+  if(!rawChunks.length){ toast("Couldn't find anything to read in that."); return; }
+  const key = 'listen_pasted_' + text.length + '_' + text.slice(0,40);
+  openReaderWithChunks(rawChunks, 'Pasted text', key);
+}
+
+async function loadFile(file){
+  const name = file.name || 'file';
+  const ext = name.split('.').pop().toLowerCase();
+  loadStatus.textContent = 'Reading ' + name + '…';
+  fileLabel.textContent = name;
   try{
-    const buf = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({data: buf}).promise;
-    const rawChunks = [];
-    for(let p=1; p<=pdf.numPages; p++){
-      loadStatus.textContent = `Reading ${file.name}… page ${p} of ${pdf.numPages}`;
-      const page = await pdf.getPage(p);
-      const content = await page.getTextContent();
-      const pageText = content.items.map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
-      if(!pageText) continue;
-      splitIntoChunks(pageText).forEach(t=>rawChunks.push({text:t, page:p}));
+    let rawChunks = [];
+    if(ext === 'pdf' || file.type === 'application/pdf'){
+      rawChunks = await extractFromPdf(file, name);
+    } else if(ext === 'txt' || file.type === 'text/plain'){
+      const text = (await file.text()).replace(/\s+/g,' ').trim();
+      rawChunks = splitIntoChunks(text).map(t=>({text:t, page:null}));
+    } else if(ext === 'docx'){
+      const buf = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({arrayBuffer: buf});
+      const text = result.value.replace(/\s+/g,' ').trim();
+      rawChunks = splitIntoChunks(text).map(t=>({text:t, page:null}));
+    } else {
+      loadStatus.textContent = '';
+      toast("That file type isn't supported yet — try a PDF, .docx, or .txt file.");
+      return;
     }
     if(!rawChunks.length){
       loadStatus.textContent = '';
-      toast("Couldn't find readable text in that PDF — it may be a scan.");
+      toast("Couldn't find readable text in that file — a PDF may be a scan with no text layer.");
       return;
     }
-    chunks = rawChunks;
-    docKey = 'listen_' + file.name + '_' + file.size;
-    idx = 0;
-    const savedIdx = parseInt(localStorage.getItem(docKey) || '0', 10);
-    loadStatus.textContent = '';
-    dropScreen.style.display = 'none';
-    reader.style.display = 'flex';
-    newFileBtn.style.display = '';
-    if(savedIdx > 0 && savedIdx < chunks.length - 1){
-      idx = savedIdx;
-      toast(`Picked up where you left off (${Math.round(idx/chunks.length*100)}% through).`);
-    }
-    renderChunk();
+    openReaderWithChunks(rawChunks, name, 'listen_' + name + '_' + file.size);
   }catch(err){
     console.error(err);
     loadStatus.textContent = '';
-    toast('Could not read that PDF: ' + err.message);
+    toast('Could not read that file: ' + err.message);
   }
+}
+
+async function extractFromPdf(file, name){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data: buf}).promise;
+  const out = [];
+  for(let p=1; p<=pdf.numPages; p++){
+    loadStatus.textContent = `Reading ${name}… page ${p} of ${pdf.numPages}`;
+    const page = await pdf.getPage(p);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(it=>it.str).join(' ').replace(/\s+/g,' ').trim();
+    if(!pageText) continue;
+    splitIntoChunks(pageText).forEach(t=>out.push({text:t, page:p}));
+  }
+  return out;
 }
 
 function splitIntoChunks(pageText){
@@ -493,7 +666,8 @@ function renderChunk(){
     (next ? `<span class="next"> ${escapeHtml(next)}</span>` : '');
   const nowEl = currentText.querySelector('.now');
   if(nowEl) nowEl.scrollIntoView({block:'center', behavior:'smooth'});
-  pageTag.textContent = chunks[idx] ? `Page ${chunks[idx].page} · ${idx+1} of ${chunks.length}` : '';
+  const c = chunks[idx];
+  pageTag.textContent = c ? (c.page ? `Page ${c.page} · ${idx+1} of ${chunks.length}` : `${idx+1} of ${chunks.length}`) : '';
   scrubFill.style.width = (chunks.length ? (idx/(chunks.length-1||1))*100 : 0) + '%';
   if(docKey) localStorage.setItem(docKey, idx);
 }
@@ -507,12 +681,12 @@ function speakChunk(){
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(chunks[idx].text);
   u.rate = rate;
-  const chosen = voices.find(v=>v.name===voiceSelect.value);
+  const chosen = voices.find(v=>v.name===selectedVoiceName);
   if(chosen) u.voice = chosen;
   u.onend = ()=>{
     if(!speaking) return;
     idx++;
-    if(idx >= chunks.length){ stopSpeaking(); toast('Finished the document.'); return; }
+    if(idx >= chunks.length){ stopSpeaking(); toast('Finished.'); return; }
     renderChunk();
     speakChunk();
   };
@@ -529,24 +703,20 @@ function restartCurrentUtterance(){
   speakChunk();
 }
 function startSpeaking(){
-  speaking = true; paused = false;
+  speaking = true;
   playIcon.innerHTML = ICON_PAUSE;
   playBtn.setAttribute('aria-label','Pause');
   speakChunk();
 }
 function stopSpeaking(){
-  speaking = false; paused = false;
+  speaking = false;
   speechSynthesis.cancel();
   playIcon.innerHTML = ICON_PLAY;
   playBtn.setAttribute('aria-label','Play');
 }
 function togglePlay(){
   if(!chunks.length) return;
-  if(speaking){
-    stopSpeaking();
-  } else {
-    startSpeaking();
-  }
+  if(speaking){ stopSpeaking(); } else { startSpeaking(); }
 }
 playBtn.addEventListener('click', togglePlay);
 backBtn.addEventListener('click', ()=>{
@@ -577,9 +747,8 @@ document.addEventListener('keydown', (e)=>{
   if(e.code === 'ArrowLeft'){ backBtn.click(); }
 });
 
-// iOS Safari can go quiet if speech keeps running with no page interaction
-// for a long time, or stop entirely once the screen locks — that's a
-// platform limitation of the Web Speech API, not a bug in this page.
+// iOS Safari can pause or stop speech once the screen locks or you switch
+// apps — that's a platform limitation of the Web Speech API, not a bug here.
 window.addEventListener('beforeunload', ()=>{ speechSynthesis.cancel(); });
 </script>
 </body>
