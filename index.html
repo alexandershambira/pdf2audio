@@ -17,22 +17,13 @@
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <style>
   :root{
-    --bg:#1B1D22;
-    --surface:#24262D;
-    --surface-2:#2D2F38;
-    --line:#383A44;
-    --ink:#ECEAE4;
-    --ink-dim:#9A9CA5;
-    --amber:#E8B24D;
-    --teal:#5B8C86;
-    --danger:#C96A5C;
+    --bg:#1B1D22; --surface:#24262D; --surface-2:#2D2F38; --line:#383A44;
+    --ink:#ECEAE4; --ink-dim:#9A9CA5; --amber:#E8B24D; --teal:#5B8C86; --danger:#C96A5C;
   }
   *{box-sizing:border-box;}
   html,body{height:100%;}
   body{
-    margin:0;
-    background:var(--bg);
-    color:var(--ink);
+    margin:0; background:var(--bg); color:var(--ink);
     font-family:'Inter',system-ui,-apple-system,sans-serif;
     -webkit-font-smoothing:antialiased;
     padding-top:env(safe-area-inset-top,0px);
@@ -40,11 +31,7 @@
     overflow:hidden;
   }
   #app{ height:100%; width:100%; display:flex; flex-direction:column; }
-
-  header{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 18px; border-bottom:1px solid var(--line); flex-shrink:0;
-  }
+  header{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--line); flex-shrink:0; }
   .brand{ font-family:'Source Serif 4',serif; font-size:17px; letter-spacing:0.01em; }
   .brand em{ font-style:italic; color:var(--amber); }
   #fileLabel{ font-size:13px; color:var(--ink-dim); max-width:46vw; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -61,7 +48,6 @@
   #chooseBtn:active{ opacity:0.85; }
   #dropHint{ font-size:13px; color:var(--ink-dim); margin-top:10px; }
   #loadStatus{ font-size:13px; color:var(--teal); min-height:18px; }
-  #resumeBanner{ display:none; font-size:13px; color:var(--ink-dim); background:var(--surface); border:1px solid var(--line); padding:10px 16px; border-radius:12px; }
 
   .divider{ display:flex; align-items:center; gap:10px; width:min(100%,380px); color:var(--ink-dim); font-size:12px; }
   .divider::before, .divider::after{ content:''; flex:1; height:1px; background:var(--line); }
@@ -95,12 +81,8 @@
   .voiceScroller{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
   .voicePill{ flex-shrink:0; display:flex; align-items:center; gap:6px; background:var(--surface-2); border:1.5px solid var(--line); color:var(--ink); font-family:inherit; font-size:13px; padding:8px 14px; border-radius:999px; white-space:nowrap; }
   .voicePill.active{ border-color:var(--amber); color:var(--amber); }
-  .voicePill .g{ color:var(--ink-dim); font-size:12px; }
-  .voicePill.active .g{ color:var(--amber); }
-  .voicePill.cloudPill.active{ border-color:var(--teal); color:var(--teal); }
-  .voicePill.cloudPill.active .g{ color:var(--teal); }
   .voicePill.addPill{ border-style:dashed; color:var(--ink-dim); }
-  #voiceNote, #cloudNote{ font-size:11.5px; color:var(--ink-dim); margin-top:6px; line-height:1.4; }
+  #voiceNote{ font-size:11.5px; color:var(--ink-dim); margin-top:6px; line-height:1.4; }
 
   .settingsRow{ display:flex; gap:10px; align-items:center; justify-content:center; }
   .speedWrap{ display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:4px 10px; }
@@ -137,7 +119,6 @@
       <button id="pasteGo">Read this text</button>
     </div>
     <div id="loadStatus"></div>
-    <div id="resumeBanner"></div>
   </div>
 
   <div id="reader">
@@ -158,15 +139,9 @@
       </div>
 
       <div class="voiceRow">
-        <div class="voiceRowLabel">ON THIS PHONE — free, offline, tap to hear it</div>
-        <div class="voiceScroller" id="deviceVoiceGrid"></div>
-        <div id="voiceNote"></div>
-      </div>
-
-      <div class="voiceRow">
-        <div class="voiceRowLabel">STUDIO VOICES — ☁ ElevenLabs (key on this phone) · 🔷 Azure (key in Netlify)</div>
-        <div class="voiceScroller" id="cloudVoiceGrid"></div>
-        <div id="cloudNote">☁ Adam / My voice ask for your ElevenLabs key right here. 🔷 Guy, Davis, Jenny, Aria need an Azure key set up once in Netlify — see the README.</div>
+        <div class="voiceRowLabel">VOICES — ElevenLabs, key stored on this phone</div>
+        <div class="voiceScroller" id="voiceGrid"></div>
+        <div id="voiceNote">First tap asks for your ElevenLabs API key. Tap "+ add voice" to add any premade voice from the ElevenLabs Voice Library (add it to your own library there first, then paste its Voice ID here). Tap an already-selected added voice again to remove it.</div>
       </div>
 
       <div class="settingsRow">
@@ -202,30 +177,24 @@ const backBtn = document.getElementById('backBtn');
 const fwdBtn = document.getElementById('fwdBtn');
 const scrubFill = document.getElementById('scrubFill');
 const scrubber = document.getElementById('scrubber');
-const deviceVoiceGrid = document.getElementById('deviceVoiceGrid');
-const cloudVoiceGrid = document.getElementById('cloudVoiceGrid');
-const voiceNote = document.getElementById('voiceNote');
+const voiceGrid = document.getElementById('voiceGrid');
 const speedVal = document.getElementById('speedVal');
 const toastEl = document.getElementById('toast');
 const pasteArea = document.getElementById('pasteArea');
 const pasteGo = document.getElementById('pasteGo');
 const cloudAudio = document.getElementById('cloudAudio');
 
-let deviceChunks = [];     // sentence-sized {text, page} — used by on-device voices
-let cloudChunks = [];      // paragraph-sized {text, page} — used by cloud voices (fewer, cheaper API calls)
-let chunks = [];           // whichever of the above is active right now
+let chunks = [];            // {text, page} — paragraph-sized blocks for ElevenLabs
 let idx = 0;
 let speaking = false;
 let rate = 1.0;
-let voices = [];           // on-device voices from the browser
-let engine = localStorage.getItem('listen_engine') || 'device'; // 'device' | 'cloud'
-let selectedVoiceName = localStorage.getItem('listen_voice') || null;  // device voice name
-let activeCloudVoice = null; // {key, voiceId, label}
+let activeVoice = null;     // {key, voiceId, label}
 let docKey = null;
-let cloudCache = {};        // "<voiceKey>_<idx>" -> blob URL
+let cache = {};              // "<voiceKey>_<idx>" -> blob URL
 
 const ICON_PLAY = '<path d="M8 5v14l11-7z"/>';
 const ICON_PAUSE = '<path d="M6 5h4v14H6zm8 0h4v14h-4z"/>';
+const ADAM = {key:'adam', voiceId:'pNInz6obpgDQGcFmaJgB', label:'Adam'};
 
 function toast(msg, ms=3200){
   toastEl.textContent = msg;
@@ -234,78 +203,36 @@ function toast(msg, ms=3200){
   toastEl._t = setTimeout(()=>toastEl.classList.remove('show'), ms);
 }
 
-/* ================= Device voices (Web Speech API) ================= */
-const KNOWN_GENDER = {
-  female: ['samantha','ava','allison','susan','victoria','karen','moira','tessa','catherine','martha','nicky','kate','serena','fiona','zoe','shelley','grandma','sandy'],
-  male:   ['alex','daniel','fred','arthur','aaron','tom','gordon','lee','nathan','oliver','rishi','eddy','reed','albert','ralph','jamie','grandpa','junior','eric','gary']
-};
-function classifyGender(name){
-  const n = name.toLowerCase();
-  for(const g of ['female','male']){
-    if(KNOWN_GENDER[g].some(k=>n.includes(k))) return g;
-  }
-  return 'unknown';
+/* ================= Voice list (Adam + any you add) ================= */
+function getCustomVoices(){
+  try{ return JSON.parse(localStorage.getItem('elevenlabs_voices') || '[]'); }
+  catch(e){ return []; }
 }
-function dedupeByName(arr){
-  const seen = new Set();
-  return arr.filter(c=>{ if(seen.has(c.v.name)) return false; seen.add(c.v.name); return true; });
+function saveCustomVoices(list){
+  localStorage.setItem('elevenlabs_voices', JSON.stringify(list));
 }
-function pickDeviceVoices(all){
-  const en = all.filter(v=>/^en/i.test(v.lang));
-  const pool = (en.length ? en : all).map(v=>({v, gender: classifyGender(v.name)}));
-  const females = dedupeByName(pool.filter(c=>c.gender==='female'));
-  const males   = dedupeByName(pool.filter(c=>c.gender==='male'));
-  const unknown = dedupeByName(pool.filter(c=>c.gender==='unknown'));
-  let chosen = [...females.slice(0,3), ...males.slice(0,3)];
-  if(chosen.length < 6){
-    const used = new Set(chosen.map(c=>c.v.name));
-    chosen = chosen.concat(unknown.filter(c=>!used.has(c.v.name)).slice(0, 6-chosen.length));
-  }
-  if(chosen.length < 6){
-    const used = new Set(chosen.map(c=>c.v.name));
-    const leftovers = dedupeByName(pool.filter(c=>!used.has(c.v.name)));
-    chosen = chosen.concat(leftovers.slice(0, 6-chosen.length));
-  }
-  return chosen;
-}
-function genderGlyph(g){ return g==='female' ? '♀' : g==='male' ? '♂' : '•'; }
-function shortVoiceName(name){ return name.replace(/\s*\(.*?\)\s*/g, '').trim() || name; }
+function getVoiceDefs(){ return [ADAM, ...getCustomVoices()]; }
 
-function loadVoices(){
-  voices = speechSynthesis.getVoices();
-  if(voices.length) renderVoiceGrids();
+function addVoicePrompt(){
+  const label = prompt('Name this voice (just for your own reference), e.g. "Rachel" or "Narrator":');
+  if(label === null || !label.trim()) return;
+  const id = prompt(`Paste the Voice ID for "${label.trim()}" (from ElevenLabs' Voice Library — add the voice to your own library there first, open it, and copy its Voice ID).`);
+  if(id === null || !id.trim()) return;
+  const list = getCustomVoices();
+  list.push({key: 'v' + Date.now(), voiceId: id.trim(), label: label.trim()});
+  saveCustomVoices(list);
+  toast(`Added "${label.trim()}".`);
+  renderVoiceGrid();
 }
-speechSynthesis.onvoiceschanged = loadVoices;
-loadVoices();
+function removeVoice(key){
+  saveCustomVoices(getCustomVoices().filter(v=>v.key!==key));
+  if(activeVoice && activeVoice.key===key){ activeVoice = ADAM; localStorage.setItem('active_voice_key', ADAM.key); }
+  renderVoiceGrid();
+}
 
-/* ================= Cloud voices (ElevenLabs, called straight from the browser) ================= */
-function getCloudVoiceDefs(){
-  const defs = [
-    {key:'adam',  type:'elevenlabs', voiceId:'pNInz6obpgDQGcFmaJgB', label:'Adam',  gender:'male'},
-    {key:'guy',   type:'azure', voiceName:'en-US-GuyNeural',   label:'Guy',   gender:'male'},
-    {key:'davis', type:'azure', voiceName:'en-US-DavisNeural', label:'Davis', gender:'male'},
-    {key:'jenny', type:'azure', voiceName:'en-US-JennyNeural', label:'Jenny', gender:'female'},
-    {key:'aria',  type:'azure', voiceName:'en-US-AriaNeural',  label:'Aria',  gender:'female'}
-  ];
-  const clonedId = localStorage.getItem('cloned_voice_id');
-  if(clonedId) defs.push({key:'cloned', type:'elevenlabs', voiceId: clonedId, label:'My voice', gender:'unknown'});
-  return defs;
-}
-function promptClonedVoice(){
-  const existing = localStorage.getItem('cloned_voice_id') || '';
-  const id = prompt('Paste your ElevenLabs Voice ID (Voice Library → your cloned voice → copy ID). Leave blank to remove it.', existing);
-  if(id === null) return;
-  if(id.trim()){
-    localStorage.setItem('cloned_voice_id', id.trim());
-    toast('Saved — tap "My voice" to use it.');
-  } else {
-    localStorage.removeItem('cloned_voice_id');
-  }
-  renderVoiceGrids();
-}
 function promptApiKey(){
   const existing = localStorage.getItem('elevenlabs_api_key') || '';
-  const key = prompt("Paste your ElevenLabs API key (elevenlabs.io → API Keys). It's stored only on this phone and sent straight to ElevenLabs — nowhere else. Leave blank to remove it.", existing);
+  const key = prompt("Paste your ElevenLabs API key (elevenlabs.io → Developers → API Keys). It's stored only on this phone and sent straight to ElevenLabs — nowhere else. Leave blank to remove it.", existing);
   if(key === null) return;
   if(key.trim()){
     localStorage.setItem('elevenlabs_api_key', key.trim());
@@ -317,7 +244,7 @@ function promptApiKey(){
 function ensureApiKey(){
   let key = localStorage.getItem('elevenlabs_api_key');
   if(key) return key;
-  const entered = prompt("Paste your ElevenLabs API key to use studio voices (elevenlabs.io → API Keys). Stored only on this phone.");
+  const entered = prompt("Paste your ElevenLabs API key to use these voices (elevenlabs.io → Developers → API Keys). Stored only on this phone.");
   if(entered && entered.trim()){
     localStorage.setItem('elevenlabs_api_key', entered.trim());
     return entered.trim();
@@ -325,109 +252,56 @@ function ensureApiKey(){
   return null;
 }
 
-/* ================= Rendering both voice rows ================= */
-function renderVoiceGrids(){
-  // device row
-  const picked = pickDeviceVoices(voices);
-  deviceVoiceGrid.innerHTML = '';
-  picked.forEach(c=>{
-    const btn = document.createElement('button');
-    btn.className = 'voicePill' + (engine==='device' && c.v.name===selectedVoiceName ? ' active' : '');
-    btn.innerHTML = `<span class="g">${genderGlyph(c.gender)}</span><span>${shortVoiceName(c.v.name)}</span>`;
-    btn.addEventListener('click', ()=>selectDeviceVoice(c.v.name));
-    deviceVoiceGrid.appendChild(btn);
-  });
-  if(!selectedVoiceName && picked.length){
-    selectedVoiceName = picked[0].v.name;
-    localStorage.setItem('listen_voice', selectedVoiceName);
+function renderVoiceGrid(){
+  const defs = getVoiceDefs();
+  if(!activeVoice){
+    const savedKey = localStorage.getItem('active_voice_key');
+    activeVoice = defs.find(d=>d.key===savedKey) || defs[0];
   }
-  const femaleCount = picked.filter(c=>c.gender==='female').length;
-  const maleCount = picked.filter(c=>c.gender==='male').length;
-  voiceNote.textContent = (picked.length < 6 || femaleCount < 3 || maleCount < 3)
-    ? `This phone currently offers ${picked.length} voice${picked.length===1?'':'s'}. For more (free): Settings → Accessibility → Spoken Content → Voices → English.`
-    : '';
-
-  // cloud row
-  const defs = getCloudVoiceDefs();
-  if(!activeCloudVoice){
-    const savedKey = localStorage.getItem('listen_cloud_voice');
-    activeCloudVoice = defs.find(d=>d.key===savedKey) || defs[0];
-  }
-  cloudVoiceGrid.innerHTML = '';
+  voiceGrid.innerHTML = '';
   defs.forEach(v=>{
     const btn = document.createElement('button');
-    btn.className = 'voicePill cloudPill' + (engine==='cloud' && activeCloudVoice && activeCloudVoice.key===v.key ? ' active' : '');
-    btn.innerHTML = `<span class="g">${v.type==='azure' ? '🔷' : '☁'}</span><span>${v.label}</span>`;
-    btn.addEventListener('click', ()=>selectCloudVoice(v));
-    cloudVoiceGrid.appendChild(btn);
+    const isActive = activeVoice && activeVoice.key===v.key;
+    btn.className = 'voicePill' + (isActive ? ' active' : '');
+    btn.textContent = v.label;
+    btn.addEventListener('click', ()=>{
+      if(isActive && v.key !== ADAM.key){
+        if(confirm(`Remove "${v.label}" from your voices?`)) removeVoice(v.key);
+        return;
+      }
+      selectVoice(v);
+    });
+    voiceGrid.appendChild(btn);
   });
   const addBtn = document.createElement('button');
   addBtn.className = 'voicePill addPill';
-  addBtn.textContent = localStorage.getItem('cloned_voice_id') ? '✎ edit my voice' : '+ add my voice';
-  addBtn.addEventListener('click', promptClonedVoice);
-  cloudVoiceGrid.appendChild(addBtn);
+  addBtn.textContent = '+ add voice';
+  addBtn.addEventListener('click', addVoicePrompt);
+  voiceGrid.appendChild(addBtn);
 
   const keyBtn = document.createElement('button');
   keyBtn.className = 'voicePill addPill';
   keyBtn.textContent = localStorage.getItem('elevenlabs_api_key') ? '🔑 edit API key' : '🔑 set API key';
   keyBtn.addEventListener('click', promptApiKey);
-  cloudVoiceGrid.appendChild(keyBtn);
+  voiceGrid.appendChild(keyBtn);
 }
-
-/* ================= Engine switching ================= */
-function remapIndexAcross(oldArr, oldIdx, newArr){
-  if(!oldArr.length || !newArr.length) return 0;
-  const frac = oldIdx/(oldArr.length-1||1);
-  return Math.min(newArr.length-1, Math.round(frac*(newArr.length-1)));
+function selectVoice(v){
+  activeVoice = v;
+  localStorage.setItem('active_voice_key', v.key);
+  renderVoiceGrid();
+  if(speaking) continueIfSpeaking();
+  else previewVoice(v);
 }
-function switchEngineOnly(newEngine){
-  if(engine === newEngine) return;
-  speechSynthesis.cancel();
-  cloudAudio.pause();
-  const oldArr = chunks;
-  const newArr = newEngine==='device' ? deviceChunks : cloudChunks;
-  idx = (oldArr.length && newArr.length) ? remapIndexAcross(oldArr, idx, newArr) : 0;
-  engine = newEngine;
-  chunks = newArr;
-  localStorage.setItem('listen_engine', engine);
-  if(chunks.length) renderChunk();
-}
-function selectDeviceVoice(name){
-  selectedVoiceName = name;
-  localStorage.setItem('listen_voice', name);
-  const wasSpeaking = speaking;
-  switchEngineOnly('device');
-  renderVoiceGrids();
-  if(wasSpeaking) continueIfSpeaking();
-  else previewDeviceVoice(name);
-}
-function selectCloudVoice(voice){
-  activeCloudVoice = voice;
-  localStorage.setItem('listen_cloud_voice', voice.key);
-  const wasSpeaking = speaking;
-  switchEngineOnly('cloud');
-  renderVoiceGrids();
-  if(wasSpeaking) continueIfSpeaking();
-  else previewCloudVoice(voice);
-}
-function previewDeviceVoice(name){
-  speechSynthesis.cancel();
-  const v = voices.find(x=>x.name===name);
-  const u = new SpeechSynthesisUtterance('Hi, this is how I sound.');
-  if(v) u.voice = v;
-  u.rate = rate;
-  speechSynthesis.speak(u);
-}
-async function previewCloudVoice(voice){
+async function previewVoice(v){
   try{
     cloudAudio.pause();
-    const resp = await fetchTTS(voice, 'Hi, this is how I sound.');
-    if(!resp.ok){ toast(await describeError(resp, voice)); return; }
+    const resp = await fetchTTS(v, 'Hi, this is how I sound.');
+    if(!resp.ok){ toast(await describeError(resp)); return; }
     const blob = await resp.blob();
     cloudAudio.src = URL.createObjectURL(blob);
     cloudAudio.playbackRate = rate;
     cloudAudio.play();
-  }catch(err){ toast('Could not reach the voice service: ' + err.message); }
+  }catch(err){ toast(err.message || 'Could not reach ElevenLabs.'); }
 }
 
 /* ================= Speed ================= */
@@ -435,11 +309,7 @@ function setRate(r){
   rate = Math.min(2, Math.max(0.6, Math.round(r*10)/10));
   speedVal.textContent = rate.toFixed(1)+'×';
   localStorage.setItem('listen_rate', rate);
-  if(engine==='cloud'){
-    cloudAudio.playbackRate = rate;
-  } else if(speaking){
-    restartCurrentUtterance();
-  }
+  cloudAudio.playbackRate = rate;
 }
 document.getElementById('slower').addEventListener('click', ()=>setRate(rate-0.1));
 document.getElementById('faster').addEventListener('click', ()=>setRate(rate+0.1));
@@ -465,10 +335,10 @@ newFileBtn.addEventListener('click', ()=>{
   pasteArea.value = '';
 });
 
-function groupForCloud(deviceArr, maxLen=550){
+function groupForCloud(sentences, maxLen=550){
   const out = [];
-  let buf = '', page = deviceArr.length ? deviceArr[0].page : null;
-  deviceArr.forEach(c=>{
+  let buf = '', page = sentences.length ? sentences[0].page : null;
+  sentences.forEach(c=>{
     if(buf && (buf.length + c.text.length + 1) > maxLen){
       out.push({text:buf.trim(), page});
       buf = c.text; page = c.page;
@@ -480,12 +350,10 @@ function groupForCloud(deviceArr, maxLen=550){
   return out;
 }
 
-function openReaderWithChunks(rawDeviceChunks, label, key){
-  deviceChunks = rawDeviceChunks;
-  cloudChunks = groupForCloud(rawDeviceChunks);
-  chunks = engine==='cloud' ? cloudChunks : deviceChunks;
+function openReaderWithChunks(sentences, label, key){
+  chunks = groupForCloud(sentences);
   docKey = key;
-  const savedIdx = parseInt(localStorage.getItem(docKey+':'+engine) || '0', 10);
+  const savedIdx = parseInt(localStorage.getItem(docKey) || '0', 10);
   idx = (savedIdx > 0 && savedIdx < chunks.length - 1) ? savedIdx : 0;
   fileLabel.textContent = label;
   loadStatus.textContent = '';
@@ -499,10 +367,10 @@ function openReaderWithChunks(rawDeviceChunks, label, key){
 function loadPastedText(text){
   text = (text||'').replace(/\s+/g,' ').trim();
   if(!text){ toast('Paste or type some text first.'); return; }
-  const rawChunks = splitIntoChunks(text).map(t=>({text:t, page:null}));
-  if(!rawChunks.length){ toast("Couldn't find anything to read in that."); return; }
+  const raw = splitIntoChunks(text).map(t=>({text:t, page:null}));
+  if(!raw.length){ toast("Couldn't find anything to read in that."); return; }
   const key = 'listen_pasted_' + text.length + '_' + text.slice(0,40);
-  openReaderWithChunks(rawChunks, 'Pasted text', key);
+  openReaderWithChunks(raw, 'Pasted text', key);
 }
 
 async function loadFile(file){
@@ -511,28 +379,28 @@ async function loadFile(file){
   loadStatus.textContent = 'Reading ' + name + '…';
   fileLabel.textContent = name;
   try{
-    let rawChunks = [];
+    let raw = [];
     if(ext === 'pdf' || file.type === 'application/pdf'){
-      rawChunks = await extractFromPdf(file, name);
+      raw = await extractFromPdf(file, name);
     } else if(ext === 'txt' || file.type === 'text/plain'){
       const text = (await file.text()).replace(/\s+/g,' ').trim();
-      rawChunks = splitIntoChunks(text).map(t=>({text:t, page:null}));
+      raw = splitIntoChunks(text).map(t=>({text:t, page:null}));
     } else if(ext === 'docx'){
       const buf = await file.arrayBuffer();
       const result = await mammoth.extractRawText({arrayBuffer: buf});
       const text = result.value.replace(/\s+/g,' ').trim();
-      rawChunks = splitIntoChunks(text).map(t=>({text:t, page:null}));
+      raw = splitIntoChunks(text).map(t=>({text:t, page:null}));
     } else {
       loadStatus.textContent = '';
       toast("That file type isn't supported yet — try a PDF, .docx, or .txt file.");
       return;
     }
-    if(!rawChunks.length){
+    if(!raw.length){
       loadStatus.textContent = '';
       toast("Couldn't find readable text in that file — a PDF may be a scan with no text layer.");
       return;
     }
-    openReaderWithChunks(rawChunks, name, 'listen_' + name + '_' + file.size);
+    openReaderWithChunks(raw, name, 'listen_' + name + '_' + file.size);
   }catch(err){
     console.error(err);
     loadStatus.textContent = '';
@@ -583,49 +451,17 @@ function renderChunk(){
   const c = chunks[idx];
   pageTag.textContent = c ? (c.page ? `Page ${c.page} · ${idx+1} of ${chunks.length}` : `${idx+1} of ${chunks.length}`) : '';
   scrubFill.style.width = (chunks.length ? (idx/(chunks.length-1||1))*100 : 0) + '%';
-  if(docKey) localStorage.setItem(docKey+':'+engine, idx);
+  if(docKey) localStorage.setItem(docKey, idx);
 }
 function escapeHtml(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-/* ================= Device speech engine ================= */
-function speakChunk(){
-  if(idx >= chunks.length){ stopSpeaking(); return; }
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(chunks[idx].text);
-  u.rate = rate;
-  const chosen = voices.find(v=>v.name===selectedVoiceName);
-  if(chosen) u.voice = chosen;
-  u.onend = ()=>{
-    if(!speaking || engine!=='device') return;
-    idx++;
-    if(idx >= chunks.length){ stopSpeaking(); toast('Finished.'); return; }
-    renderChunk();
-    speakChunk();
-  };
-  u.onerror = (e)=>{ if(e.error==='interrupted' || e.error==='canceled') return; console.error(e); };
-  speechSynthesis.speak(u);
-  renderChunk();
-}
-function restartCurrentUtterance(){ if(speaking && engine==='device'){ speechSynthesis.cancel(); speakChunk(); } }
-
-/* ================= Cloud speech engine ================= */
+/* ================= ElevenLabs playback ================= */
 function fetchTTS(voice, text){
-  if(voice.type === 'azure'){
-    return fetch('/.netlify/functions/tts', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ text, voice: voice.voiceName })
-    });
-  }
   const key = ensureApiKey();
-  if(!key) return Promise.reject(new Error('An ElevenLabs API key is needed for studio voices — tap "🔑 set API key".'));
+  if(!key) return Promise.reject(new Error('An ElevenLabs API key is needed — tap "🔑 set API key".'));
   return fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice.voiceId}`, {
     method:'POST',
-    headers:{
-      'xi-api-key': key,
-      'Content-Type':'application/json',
-      'Accept':'audio/mpeg'
-    },
+    headers:{ 'xi-api-key': key, 'Content-Type':'application/json', 'Accept':'audio/mpeg' },
     body: JSON.stringify({
       text,
       model_id: 'eleven_turbo_v2_5',
@@ -633,60 +469,50 @@ function fetchTTS(voice, text){
     })
   });
 }
-async function describeError(resp, voice){
+async function describeError(resp){
   let detail = '';
   try{
     const data = await resp.clone().json();
     detail = (data && data.detail && (data.detail.message || data.detail)) || JSON.stringify(data);
-  }catch(e){
-    detail = await resp.text().catch(()=> '');
-  }
-  if(/AZURE_SPEECH_KEY|AZURE_SPEECH_REGION/.test(detail)){
-    return 'That Azure voice needs its key set up in Netlify first — see the README.';
-  }
-  if(resp.status === 401){
-    return voice && voice.type==='azure'
-      ? 'Azure rejected that key — double check it in Netlify.'
-      : 'Your ElevenLabs API key looks invalid — tap "🔑 edit API key" to fix it.';
-  }
-  if(resp.status === 429){
-    return "That voice service's rate limit or free quota has been reached.";
-  }
-  return 'Voice service error (' + resp.status + '): ' + String(detail).slice(0,140);
+  }catch(e){ detail = await resp.text().catch(()=> ''); }
+  if(resp.status === 401) return 'Your ElevenLabs API key looks invalid — tap "🔑 edit API key" to fix it.';
+  if(resp.status === 404) return "That voice isn't in your ElevenLabs library yet — add it from the Voice Library first, then copy its Voice ID.";
+  if(resp.status === 429) return "You've hit ElevenLabs' rate limit or run out of characters for this month.";
+  return 'ElevenLabs error (' + resp.status + '): ' + String(detail).slice(0,140);
 }
-async function getCloudAudioUrl(i){
-  const voice = activeCloudVoice;
+async function getAudioUrl(i){
+  const voice = activeVoice;
   const cacheKey = voice.key + '_' + i;
-  if(cloudCache[cacheKey]) return cloudCache[cacheKey];
-  const resp = await fetchTTS(voice, cloudChunks[i].text);
-  if(!resp.ok) throw new Error(await describeError(resp, voice));
+  if(cache[cacheKey]) return cache[cacheKey];
+  const resp = await fetchTTS(voice, chunks[i].text);
+  if(!resp.ok) throw new Error(await describeError(resp));
   const blob = await resp.blob();
   const url = URL.createObjectURL(blob);
-  cloudCache[cacheKey] = url;
+  cache[cacheKey] = url;
   return url;
 }
-function prefetchCloudChunk(i){
-  if(i < 0 || i >= cloudChunks.length) return;
-  const voice = activeCloudVoice;
+function prefetchChunk(i){
+  if(i < 0 || i >= chunks.length) return;
+  const voice = activeVoice;
   const cacheKey = voice.key + '_' + i;
-  if(cloudCache[cacheKey]) return;
-  fetchTTS(voice, cloudChunks[i].text)
+  if(cache[cacheKey]) return;
+  fetchTTS(voice, chunks[i].text)
     .then(r=> r.ok ? r.blob() : null)
-    .then(b=>{ if(b) cloudCache[cacheKey] = URL.createObjectURL(b); })
+    .then(b=>{ if(b) cache[cacheKey] = URL.createObjectURL(b); })
     .catch(()=>{});
 }
-async function playCloudChunkInner(){
-  if(idx >= cloudChunks.length){ stopSpeaking(); toast('Finished.'); return; }
+async function playChunkInner(){
+  if(idx >= chunks.length){ stopSpeaking(); toast('Finished.'); return; }
   renderChunk();
   playBtn.classList.add('loading');
   try{
-    const url = await getCloudAudioUrl(idx);
-    if(!speaking || engine!=='cloud') return; // user stopped/switched while this was loading
+    const url = await getAudioUrl(idx);
+    if(!speaking) return;
     playBtn.classList.remove('loading');
     cloudAudio.src = url;
     cloudAudio.playbackRate = rate;
     await cloudAudio.play();
-    prefetchCloudChunk(idx+1);
+    prefetchChunk(idx+1);
   }catch(err){
     playBtn.classList.remove('loading');
     toast(err.message || 'Could not play that voice.');
@@ -694,16 +520,13 @@ async function playCloudChunkInner(){
   }
 }
 cloudAudio.onended = ()=>{
-  if(!speaking || engine!=='cloud') return;
+  if(!speaking) return;
   idx++;
-  playCloudChunkInner();
+  playChunkInner();
 };
 
-/* ================= Shared transport ================= */
-function continueIfSpeaking(){
-  if(!speaking) return;
-  if(engine==='device') speakChunk(); else playCloudChunkInner();
-}
+/* ================= Transport ================= */
+function continueIfSpeaking(){ if(speaking) playChunkInner(); }
 function startSpeaking(){
   speaking = true;
   playIcon.innerHTML = ICON_PAUSE;
@@ -712,7 +535,6 @@ function startSpeaking(){
 }
 function stopSpeaking(){
   speaking = false;
-  speechSynthesis.cancel();
   cloudAudio.pause();
   playBtn.classList.remove('loading');
   playIcon.innerHTML = ICON_PLAY;
@@ -751,9 +573,9 @@ document.addEventListener('keydown', (e)=>{
   if(e.code === 'ArrowLeft'){ backBtn.click(); }
 });
 
-window.addEventListener('beforeunload', ()=>{ speechSynthesis.cancel(); cloudAudio.pause(); });
+window.addEventListener('beforeunload', ()=>{ cloudAudio.pause(); });
 
-renderVoiceGrids();
+renderVoiceGrid();
 </script>
 </body>
 </html>
