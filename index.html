@@ -164,9 +164,9 @@
       </div>
 
       <div class="voiceRow">
-        <div class="voiceRowLabel">STUDIO VOICES — cloud, uses your own API key</div>
+        <div class="voiceRowLabel">STUDIO VOICES — ☁ ElevenLabs (key on this phone) · 🔷 Azure (key in Netlify)</div>
         <div class="voiceScroller" id="cloudVoiceGrid"></div>
-        <div id="cloudNote">Needs an API key set up once in Netlify — see the README for the two-minute setup.</div>
+        <div id="cloudNote">☁ Adam / My voice ask for your ElevenLabs key right here. 🔷 Guy, Davis, Jenny, Aria need an Azure key set up once in Netlify — see the README.</div>
       </div>
 
       <div class="settingsRow">
@@ -220,7 +220,7 @@ let rate = 1.0;
 let voices = [];           // on-device voices from the browser
 let engine = localStorage.getItem('listen_engine') || 'device'; // 'device' | 'cloud'
 let selectedVoiceName = localStorage.getItem('listen_voice') || null;  // device voice name
-let activeCloudVoice = null; // {key, provider, voiceId|voice, label}
+let activeCloudVoice = null; // {key, voiceId, label}
 let docKey = null;
 let cloudCache = {};        // "<voiceKey>_<idx>" -> blob URL
 
@@ -278,14 +278,17 @@ function loadVoices(){
 speechSynthesis.onvoiceschanged = loadVoices;
 loadVoices();
 
-/* ================= Cloud voices (ElevenLabs / OpenAI via Netlify function) ================= */
+/* ================= Cloud voices (ElevenLabs, called straight from the browser) ================= */
 function getCloudVoiceDefs(){
   const defs = [
-    {key:'adam', provider:'elevenlabs', voiceId:'pNInz6obpgDQGcFmaJgB', label:'Adam', gender:'male'},
-    {key:'onyx', provider:'openai', voice:'onyx', label:'Onyx', gender:'male'}
+    {key:'adam',  type:'elevenlabs', voiceId:'pNInz6obpgDQGcFmaJgB', label:'Adam',  gender:'male'},
+    {key:'guy',   type:'azure', voiceName:'en-US-GuyNeural',   label:'Guy',   gender:'male'},
+    {key:'davis', type:'azure', voiceName:'en-US-DavisNeural', label:'Davis', gender:'male'},
+    {key:'jenny', type:'azure', voiceName:'en-US-JennyNeural', label:'Jenny', gender:'female'},
+    {key:'aria',  type:'azure', voiceName:'en-US-AriaNeural',  label:'Aria',  gender:'female'}
   ];
   const clonedId = localStorage.getItem('cloned_voice_id');
-  if(clonedId) defs.push({key:'cloned', provider:'elevenlabs', voiceId: clonedId, label:'My voice', gender:'unknown'});
+  if(clonedId) defs.push({key:'cloned', type:'elevenlabs', voiceId: clonedId, label:'My voice', gender:'unknown'});
   return defs;
 }
 function promptClonedVoice(){
@@ -299,6 +302,27 @@ function promptClonedVoice(){
     localStorage.removeItem('cloned_voice_id');
   }
   renderVoiceGrids();
+}
+function promptApiKey(){
+  const existing = localStorage.getItem('elevenlabs_api_key') || '';
+  const key = prompt("Paste your ElevenLabs API key (elevenlabs.io → API Keys). It's stored only on this phone and sent straight to ElevenLabs — nowhere else. Leave blank to remove it.", existing);
+  if(key === null) return;
+  if(key.trim()){
+    localStorage.setItem('elevenlabs_api_key', key.trim());
+    toast('Key saved on this phone.');
+  } else {
+    localStorage.removeItem('elevenlabs_api_key');
+  }
+}
+function ensureApiKey(){
+  let key = localStorage.getItem('elevenlabs_api_key');
+  if(key) return key;
+  const entered = prompt("Paste your ElevenLabs API key to use studio voices (elevenlabs.io → API Keys). Stored only on this phone.");
+  if(entered && entered.trim()){
+    localStorage.setItem('elevenlabs_api_key', entered.trim());
+    return entered.trim();
+  }
+  return null;
 }
 
 /* ================= Rendering both voice rows ================= */
@@ -333,7 +357,7 @@ function renderVoiceGrids(){
   defs.forEach(v=>{
     const btn = document.createElement('button');
     btn.className = 'voicePill cloudPill' + (engine==='cloud' && activeCloudVoice && activeCloudVoice.key===v.key ? ' active' : '');
-    btn.innerHTML = `<span class="g">☁</span><span>${v.label}</span>`;
+    btn.innerHTML = `<span class="g">${v.type==='azure' ? '🔷' : '☁'}</span><span>${v.label}</span>`;
     btn.addEventListener('click', ()=>selectCloudVoice(v));
     cloudVoiceGrid.appendChild(btn);
   });
@@ -342,6 +366,12 @@ function renderVoiceGrids(){
   addBtn.textContent = localStorage.getItem('cloned_voice_id') ? '✎ edit my voice' : '+ add my voice';
   addBtn.addEventListener('click', promptClonedVoice);
   cloudVoiceGrid.appendChild(addBtn);
+
+  const keyBtn = document.createElement('button');
+  keyBtn.className = 'voicePill addPill';
+  keyBtn.textContent = localStorage.getItem('elevenlabs_api_key') ? '🔑 edit API key' : '🔑 set API key';
+  keyBtn.addEventListener('click', promptApiKey);
+  cloudVoiceGrid.appendChild(keyBtn);
 }
 
 /* ================= Engine switching ================= */
@@ -392,7 +422,7 @@ async function previewCloudVoice(voice){
   try{
     cloudAudio.pause();
     const resp = await fetchTTS(voice, 'Hi, this is how I sound.');
-    if(!resp.ok){ toast(await describeError(resp)); return; }
+    if(!resp.ok){ toast(await describeError(resp, voice)); return; }
     const blob = await resp.blob();
     cloudAudio.src = URL.createObjectURL(blob);
     cloudAudio.playbackRate = rate;
@@ -580,25 +610,56 @@ function restartCurrentUtterance(){ if(speaking && engine==='device'){ speechSyn
 
 /* ================= Cloud speech engine ================= */
 function fetchTTS(voice, text){
-  return fetch('/.netlify/functions/tts', {
+  if(voice.type === 'azure'){
+    return fetch('/.netlify/functions/tts', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ text, voice: voice.voiceName })
+    });
+  }
+  const key = ensureApiKey();
+  if(!key) return Promise.reject(new Error('An ElevenLabs API key is needed for studio voices — tap "🔑 set API key".'));
+  return fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice.voiceId}`, {
     method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ provider: voice.provider, text, voiceId: voice.voiceId, voice: voice.voice })
+    headers:{
+      'xi-api-key': key,
+      'Content-Type':'application/json',
+      'Accept':'audio/mpeg'
+    },
+    body: JSON.stringify({
+      text,
+      model_id: 'eleven_turbo_v2_5',
+      voice_settings: { stability:0.5, similarity_boost:0.75 }
+    })
   });
 }
-async function describeError(resp){
-  const body = await resp.text().catch(()=> '');
-  if(resp.status === 500 && /API_KEY is not set/.test(body)){
-    return "That voice needs an API key set up in Netlify first — see the README.";
+async function describeError(resp, voice){
+  let detail = '';
+  try{
+    const data = await resp.clone().json();
+    detail = (data && data.detail && (data.detail.message || data.detail)) || JSON.stringify(data);
+  }catch(e){
+    detail = await resp.text().catch(()=> '');
   }
-  return 'Voice service error (' + resp.status + ').';
+  if(/AZURE_SPEECH_KEY|AZURE_SPEECH_REGION/.test(detail)){
+    return 'That Azure voice needs its key set up in Netlify first — see the README.';
+  }
+  if(resp.status === 401){
+    return voice && voice.type==='azure'
+      ? 'Azure rejected that key — double check it in Netlify.'
+      : 'Your ElevenLabs API key looks invalid — tap "🔑 edit API key" to fix it.';
+  }
+  if(resp.status === 429){
+    return "That voice service's rate limit or free quota has been reached.";
+  }
+  return 'Voice service error (' + resp.status + '): ' + String(detail).slice(0,140);
 }
 async function getCloudAudioUrl(i){
   const voice = activeCloudVoice;
   const cacheKey = voice.key + '_' + i;
   if(cloudCache[cacheKey]) return cloudCache[cacheKey];
   const resp = await fetchTTS(voice, cloudChunks[i].text);
-  if(!resp.ok) throw new Error(await describeError(resp));
+  if(!resp.ok) throw new Error(await describeError(resp, voice));
   const blob = await resp.blob();
   const url = URL.createObjectURL(blob);
   cloudCache[cacheKey] = url;
